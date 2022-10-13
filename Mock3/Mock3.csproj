@@ -186,10 +186,15 @@
     <Compile Include="Migrations\202210131808373_OCForVoucher.Designer.cs">
       <DependentUpon>202210131808373_OCForVoucher.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202210131858417_CreateExamTable.cs" />
+    <Compile Include="Migrations\202210131858417_CreateExamTable.Designer.cs">
+      <DependentUpon>202210131858417_CreateExamTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
+    <Compile Include="Models\Exam.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Voucher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -281,6 +286,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202210131808373_OCForVoucher.resx">
       <DependentUpon>202210131808373_OCForVoucher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202210131858417_CreateExamTable.resx">
+      <DependentUpon>202210131858417_CreateExamTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
