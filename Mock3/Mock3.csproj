@@ -190,12 +190,17 @@
     <Compile Include="Migrations\202210131858417_CreateExamTable.Designer.cs">
       <DependentUpon>202210131858417_CreateExamTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202210132144228_CreateUserExamTable.cs" />
+    <Compile Include="Migrations\202210132144228_CreateUserExamTable.Designer.cs">
+      <DependentUpon>202210132144228_CreateUserExamTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Exam.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\UserExam.cs" />
     <Compile Include="Models\Voucher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -289,6 +294,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202210131858417_CreateExamTable.resx">
       <DependentUpon>202210131858417_CreateExamTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202210132144228_CreateUserExamTable.resx">
+      <DependentUpon>202210132144228_CreateUserExamTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
