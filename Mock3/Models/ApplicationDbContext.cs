@@ -9,6 +9,7 @@ namespace Mock3.Models
         public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<UserExam> UserExams { get; set; }
+        public DbSet<ExamScore> ExamScores { get; set; }
 
 
         public ApplicationDbContext()

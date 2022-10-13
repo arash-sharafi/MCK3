@@ -198,11 +198,16 @@
     <Compile Include="Migrations\202210132158437_PopulateExamTable.Designer.cs">
       <DependentUpon>202210132158437_PopulateExamTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202210132222278_CreateExamScoreTable.cs" />
+    <Compile Include="Migrations\202210132222278_CreateExamScoreTable.Designer.cs">
+      <DependentUpon>202210132222278_CreateExamScoreTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Exam.cs" />
+    <Compile Include="Models\ExamScore.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\UserExam.cs" />
     <Compile Include="Models\Voucher.cs" />
@@ -304,6 +309,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202210132158437_PopulateExamTable.resx">
       <DependentUpon>202210132158437_PopulateExamTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202210132222278_CreateExamScoreTable.resx">
+      <DependentUpon>202210132222278_CreateExamScoreTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
