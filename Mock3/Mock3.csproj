@@ -194,6 +194,10 @@
     <Compile Include="Migrations\202210132144228_CreateUserExamTable.Designer.cs">
       <DependentUpon>202210132144228_CreateUserExamTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202210132158437_PopulateExamTable.cs" />
+    <Compile Include="Migrations\202210132158437_PopulateExamTable.Designer.cs">
+      <DependentUpon>202210132158437_PopulateExamTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
@@ -297,6 +301,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202210132144228_CreateUserExamTable.resx">
       <DependentUpon>202210132144228_CreateUserExamTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202210132158437_PopulateExamTable.resx">
+      <DependentUpon>202210132158437_PopulateExamTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
