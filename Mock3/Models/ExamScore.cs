@@ -1,4 +1,6 @@
-﻿namespace Mock3.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Mock3.Models
 {
     public class ExamScore
     {
@@ -12,6 +14,7 @@
 
         public double Writing { get; set; }
 
+        [StringLength(10)]
         public string SubmitDate { get; set; }
 
 

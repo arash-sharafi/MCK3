@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewBag.Title = "خرید ووچر آزمون آزمایشی تافل";
+}
+
+<h2>خرید ووچر آزمون آزمایشی</h2>
+
+<div class="text-center">
+    <div class="voucher">
+        @using (Html.BeginForm("Buy", "Vouchers", new { voucherCount = 1 }))
+        {
+            @Html.AntiForgeryToken()
+            <div>
+                <h3>
+                    ووچر آزمون آزمایشی TOEFL
+                </h3>
+                <div>
+                    <span>قیمت: 480,000 تومان</span>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">خرید آنلاین ووچر</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

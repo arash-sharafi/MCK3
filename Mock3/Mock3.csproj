@@ -171,6 +171,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\VouchersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -201,6 +202,10 @@
     <Compile Include="Migrations\202210132222278_CreateExamScoreTable.cs" />
     <Compile Include="Migrations\202210132222278_CreateExamScoreTable.Designer.cs">
       <DependentUpon>202210132222278_CreateExamScoreTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202210141939582_OCForExamScore.cs" />
+    <Compile Include="Migrations\202210141939582_OCForExamScore.Designer.cs">
+      <DependentUpon>202210141939582_OCForExamScore.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -271,12 +276,14 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Vouchers\Buy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\Areas\ToeflMgt\Controllers\" />
     <Folder Include="Admin\Areas\ToeflMgt\Data\" />
     <Folder Include="Admin\Areas\ToeflMgt\Views\Shared\" />
     <Folder Include="App_Data\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -312,6 +319,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202210132222278_CreateExamScoreTable.resx">
       <DependentUpon>202210132222278_CreateExamScoreTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202210141939582_OCForExamScore.resx">
+      <DependentUpon>202210141939582_OCForExamScore.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
