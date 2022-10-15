@@ -47,6 +47,10 @@ namespace Mock3.Controllers
         [HttpPost]
         public ActionResult Register(int id, RegisterExamViewModel model)
         {
+            if (!ModelState.IsValid)
+                return View(model);
+
+
             var currentUserId = User.Identity.GetUserId();
 
             var voucher = _context.Vouchers.

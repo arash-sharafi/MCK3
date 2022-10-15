@@ -52,6 +52,7 @@
                 <span>
                     قبل از ثبت نام شرایط و ضوابط شرکت در آزمون را به صورت کامل مطالعه کرده و می پذیرم.
                 </span>
+                <br />
                 @Html.ValidationMessageFor(x => x.Agree)
 
             </p>
@@ -62,6 +63,8 @@
             </div>
             <br />
             @Html.ValidationMessageFor(x => x.VoucherNo)
+            <br />
+            <br />
             <br />
             <br />
             <p>داوطلب گرامی ضمن عرض سلام و آرزوی موفقیت برای شما خواهشمند است به موارد زیر برای ثبت نام و برگزاری مطلوب آزمون آزمایشی تافل اینترنتی توجه فرمایید: </p>
@@ -95,5 +98,9 @@
     }
 </div>
 
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
 
+}
 

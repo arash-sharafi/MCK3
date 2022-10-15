@@ -7,39 +7,45 @@
 
 
 <div class="container">
-    <table class="table">
-        <thead>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>عنوان آزمون</td>
+                    <td>تاریخ برگزاری</td>
+                    <td>روز و ساعت آزمون</td>
+                    <td>ظرفیت</td>
+                    <td>وضعیت ثبت نام</td>
+                    <td></td>
+                </tr>
+            </thead>
+            @foreach (var exam in Model.Exams)
+            {
+                <tr>
+                    <td>@exam.Name</td>
+                    <td>@exam.StartDate</td>
+                    <td>@exam.Description</td>
+                    <td>@exam.Capacity</td>
+                    <td>@exam.RegisterStatus</td>
+                    <td>
+                        @{
+                            if (exam.RemainingCapacity > 0)
+                            {
+                                @Html.ActionLink("ثبت نام", "Register", new { id = exam.Id }, new { @class = "btn btn-primary" })
+
+                            }
+                        }
+                    </td>
+                </tr>
+            }
             <tr>
-                <td>عنوان آزمون</td>
-                <td>تاریخ برگزاری</td>
-                <td>روز و ساعت آزمون</td>
-                <td>ظرفیت</td>
-                <td>وضعیت ثبت نام</td>
                 <td></td>
             </tr>
-        </thead>
-        @foreach (var exam in Model.Exams)
-        {
-            <tr>
-                <td>@exam.Name</td>
-                <td>@exam.StartDate</td>
-                <td>@exam.Description</td>
-                <td>@exam.Capacity</td>
-                <td>@exam.RegisterStatus</td>
-                <td>
-                    @{
-                        if (exam.RemainingCapacity > 0)
-                        {
-                            @Html.ActionLink("ثبت نام", "Register", new { id = exam.Id }, new { @class = "btn btn-primary" })
-
-                        }
-                    }
-                </td>
-            </tr>
-        }
-        <tr>
-            <td></td>
-        </tr>
-    </table>
+        </table>
+    </div>
 </div>
+
+
+
+
 
