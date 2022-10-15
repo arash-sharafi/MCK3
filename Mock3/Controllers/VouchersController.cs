@@ -23,6 +23,7 @@ namespace Mock3.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Buy(int voucherCount)
         {
             var currentUserId = User.Identity.GetUserId();
