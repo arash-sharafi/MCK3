@@ -1,0 +1,45 @@
+﻿@model Mock3.ViewModels.ExamsListViewModel
+@{
+    ViewBag.Title = "لیست آزمونها جهت ثبت نام";
+}
+
+<h2>ثبت نام در آزمون آزمایشی</h2>
+
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <td>عنوان آزمون</td>
+                <td>تاریخ برگزاری</td>
+                <td>روز و ساعت آزمون</td>
+                <td>ظرفیت</td>
+                <td>وضعیت ثبت نام</td>
+                <td></td>
+            </tr>
+        </thead>
+        @foreach (var exam in Model.Exams)
+        {
+            <tr>
+                <td>@exam.Name</td>
+                <td>@exam.StartDate</td>
+                <td>@exam.Description</td>
+                <td>@exam.Capacity</td>
+                <td>@exam.RegisterStatus</td>
+                <td>
+                    @{
+                        if (exam.RemainingCapacity > 0)
+                        {
+                            @Html.ActionLink("ثبت نام", "Register", new { id = exam.Id }, new { @class = "btn btn-primary" })
+
+                        }
+                    }
+                </td>
+            </tr>
+        }
+        <tr>
+            <td></td>
+        </tr>
+    </table>
+</div>
+

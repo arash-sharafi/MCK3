@@ -169,6 +169,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Admin\Areas\ToeflMgt\ToeflMgtAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ExamsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\VouchersController.cs" />
@@ -218,6 +219,9 @@
     <Compile Include="Models\Voucher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\ExamsListViewModel.cs" />
+    <Compile Include="ViewModels\ExamViewModel.cs" />
+    <Compile Include="ViewModels\RegisterExamViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -277,13 +281,14 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Vouchers\Buy.cshtml" />
+    <Content Include="Views\Exams\Index.cshtml" />
+    <Content Include="Views\Exams\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\Areas\ToeflMgt\Controllers\" />
     <Folder Include="Admin\Areas\ToeflMgt\Data\" />
     <Folder Include="Admin\Areas\ToeflMgt\Views\Shared\" />
     <Folder Include="App_Data\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
