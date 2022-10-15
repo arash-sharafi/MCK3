@@ -32,11 +32,25 @@ namespace Mock3.Controllers
                     Capacity = exam.Capacity,
                     IsOpen = exam.IsOpen,
                     RegisterStatus = ExamRegisterStatus(exam),
+                    IsUserRegisteredBefore = IsUserRegisteredInExamBefore(exam),
                     Id = exam.Id
                 });
             }
 
             return View(examsListViewModel);
+        }
+
+        private bool IsUserRegisteredInExamBefore(Exam exam)
+        {
+            var currentUserId = User.Identity.GetUserId();
+
+            var userExamRecord = _context.UserExams
+                .FirstOrDefault(x => x.UserId == currentUserId
+                                     && x.ExamId == exam.Id);
+            if (userExamRecord != null)
+                return true;
+            else
+                return false;
         }
 
         public ActionResult Register(int id)
@@ -53,12 +67,32 @@ namespace Mock3.Controllers
 
             var currentUserId = User.Identity.GetUserId();
 
-            var voucher = _context.Vouchers.
+
+
+            var usedVoucher = _context.Vouchers.
                 FirstOrDefault(x => x.VoucherNo.Equals(model.VoucherNo));
 
-
-            if (voucher == null)
+            if (usedVoucher == null)
                 return RedirectToAction("Index", "Home");
+
+
+
+
+            var voucherUsedBefore = _context.UserExams
+                .FirstOrDefault(x => x.VoucherId == usedVoucher.Id);
+
+            if (voucherUsedBefore != null)
+                return RedirectToAction("Index", "Home");
+
+
+
+
+            var userRegisteredBefore = _context.UserExams
+                .FirstOrDefault(x => x.UserId == currentUserId && x.ExamId == id
+                                                               && x.VoucherId == usedVoucher.Id);
+            if (userRegisteredBefore != null)
+                return RedirectToAction("Index");
+
 
 
             var examParticipantsCounter = 0;
@@ -72,12 +106,12 @@ namespace Mock3.Controllers
             {
                 ExamId = id,
                 UserId = currentUserId,
-                VoucherId = voucher.Id,
+                VoucherId = usedVoucher.Id,
                 ChairNo = (byte)++examParticipantsCounter
             });
 
             var registeredExam = _context.Exams.Find(id);
-            if (registeredExam != null) 
+            if (registeredExam != null)
                 registeredExam.RemainingCapacity -= 1;
 
             _context.SaveChanges();

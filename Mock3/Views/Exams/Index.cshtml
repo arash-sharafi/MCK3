@@ -26,10 +26,24 @@
                     <td>@exam.StartDate</td>
                     <td>@exam.Description</td>
                     <td>@exam.Capacity</td>
-                    <td>@exam.RegisterStatus</td>
                     <td>
                         @{
-                            if (exam.RemainingCapacity > 0)
+                            if (!exam.IsUserRegisteredBefore)
+                            {
+                                <span>@exam.RegisterStatus</span>
+                            }
+                            else
+                            {
+                                <span>ثبت نام انجام شده</span>
+                            }
+
+                        }
+                    </td>
+                    <td>
+                        @{
+                            if (exam.IsOpen
+                                && !exam.IsUserRegisteredBefore
+                                && exam.RemainingCapacity > 0)
                             {
                                 @Html.ActionLink("ثبت نام", "Register", new { id = exam.Id }, new { @class = "btn btn-primary" })
 

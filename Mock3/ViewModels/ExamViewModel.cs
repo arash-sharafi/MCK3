@@ -23,6 +23,8 @@ namespace Mock3.ViewModels
 
         public bool IsOpen { get; set; }
 
+        public bool IsUserRegisteredBefore { get; set; }
+
         public string RegisterStatus { get; set; }
     }
 }
