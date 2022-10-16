@@ -1,7 +1,42 @@
-﻿body {
-    padding-top: 50px;
+﻿@font-face {
+    font-family: IRANSans;
+    font-style: normal;
+    font-weight: 700;
+    src: url("../fonts/IRANSansWeb(FaNum)_Bold.woff2") format("woff2")
+}
+
+@font-face {
+    font-family: IRANSans;
+    font-style: normal;
+    font-weight: 500;
+    src: url("../fonts/IRANSansWeb(FaNum)_Medium.woff2") format("woff2")
+}
+
+@font-face {
+    font-family: IRANSans;
+    font-style: normal;
+    font-weight: 300;
+    src: url("../fonts/IRANSansWeb(FaNum)_Light.woff2") format("woff2")
+}
+
+@font-face {
+    font-family: IRANSans;
+    font-style: normal;
+    font-weight: 200;
+    src: url("../fonts/IRANSansWeb(FaNum)_UltraLight.woff2") format("woff2")
+}
+
+@font-face {
+    font-family: IRANSans;
+    font-style: normal;
+    font-weight: 400;
+    src: url("../fonts/IRANSansWeb(FaNum).woff2") format("woff2")
+}
+
+body {
     padding-bottom: 20px;
     direction: rtl;
+    font-family: IRANSans;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -25,6 +60,38 @@ textarea {
 }
 
 
+.site-header {
+    background-color: #474f58;
+    padding: 5px 15%;
+}
+
+    .site-header img {
+        height: 45px;
+    }
+
+    .site-header .welcome {
+        color: #e0e7e9;
+        font-size: 1.2rem;
+        margin-top: 10px;
+        margin-right: 12px;
+    }
+
+.phone-icon {
+    color: #fecb04;
+    font-size: 5rem;
+    float: left;
+    vertical-align: sub;
+}
+
+    .phone-icon span {
+        font-family: Arial;
+        font-weight: 200;
+        font-size: 1.4rem;
+        vertical-align: super;
+        color: #e0e7e9;
+    }
+
+
 .voucher {
     display: inline-block;
     width: 80%;
@@ -32,6 +99,7 @@ textarea {
     max-width: 250px;
     border: 1px solid black;
     font-family: 'Tahoma';
+    -ms-border-radius: 10px;
     border-radius: 10px;
     margin: 20px auto;
     padding: 50px 2%;
@@ -42,8 +110,31 @@ textarea {
     user-select: none;
 }
 
-.voucher div {
-    margin: 20px 0;
+    .voucher div {
+        margin: 20px 0;
+    }
+
+
+/* Bootstrap Overrides */
+.navbar {
+    -ms-border-radius: 0;
+    border-radius: 0;
+}
+
+.navbar-inverse {
+    background-color: #2e3743;
+    border-color: #2e3743;
 }
 
 
+.navbar-header {
+    float: right;
+}
+
+.navbar-nav > li {
+    float: right;
+}
+
+.dropdown-menu {
+    text-align: right;
+}
