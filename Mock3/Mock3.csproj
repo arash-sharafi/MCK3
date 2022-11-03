@@ -208,12 +208,17 @@
     <Compile Include="Migrations\202210141939582_OCForExamScore.Designer.cs">
       <DependentUpon>202210141939582_OCForExamScore.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202210272054579_ExtendApplicationUser.cs" />
+    <Compile Include="Migrations\202210272054579_ExtendApplicationUser.Designer.cs">
+      <DependentUpon>202210272054579_ExtendApplicationUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Exam.cs" />
     <Compile Include="Models\ExamScore.cs" />
+    <Compile Include="ViewModels\ExternalLoginConfirmationViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\UserExam.cs" />
     <Compile Include="Models\Voucher.cs" />
@@ -221,7 +226,14 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\ExamsListViewModel.cs" />
     <Compile Include="ViewModels\ExamViewModel.cs" />
+    <Compile Include="ViewModels\ExternalLoginListViewModel.cs" />
+    <Compile Include="ViewModels\ForgotViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\RegisterExamViewModel.cs" />
+    <Compile Include="ViewModels\RegisterViewModel.cs" />
+    <Compile Include="ViewModels\ResetPasswordViewModel.cs" />
+    <Compile Include="ViewModels\SendCodeViewModel.cs" />
+    <Compile Include="ViewModels\VerifyCodeViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -334,6 +346,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202210141939582_OCForExamScore.resx">
       <DependentUpon>202210141939582_OCForExamScore.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202210272054579_ExtendApplicationUser.resx">
+      <DependentUpon>202210272054579_ExtendApplicationUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

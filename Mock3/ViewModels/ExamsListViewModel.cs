@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Mock3.ViewModels
+namespace Mock3.Models
 {
     public class ExamsListViewModel
     {

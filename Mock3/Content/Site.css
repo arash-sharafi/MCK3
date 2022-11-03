@@ -53,12 +53,12 @@ body {
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
-input,
+/*input,
 select,
 textarea {
-    max-width: 280px;
+    max-width: 380px;
 }
-
+*/
 
 .site-header {
     background-color: #474f58;

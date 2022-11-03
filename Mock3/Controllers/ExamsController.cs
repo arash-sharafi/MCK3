@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Models;
-using Mock3.ViewModels;
 using System.Linq;
 using System.Web.Mvc;
 

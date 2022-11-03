@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace Mock3.ViewModels
+namespace Mock3.Models
 {
     public class RegisterExamViewModel
     {
