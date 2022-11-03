@@ -244,6 +244,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="images\1.jpg" />
+    <Content Include="images\Logo-White.png" />
     <Content Include="images\Logo-Yellow.png" />
     <Content Include="Admin\Areas\ToeflMgt\Views\web.config" />
     <Content Include="fonts\IRANSansWeb%28FaNum%29.woff2" />
