@@ -34,7 +34,6 @@
 }
 
 body {
-    padding-bottom: 20px;
     direction: rtl;
     font-family: IRANSans;
 }
@@ -161,26 +160,15 @@ textarea {
 .footer {
     background-color: #474f58;
     color: #e0e7e9;
-    padding: 30px 20rem;
+    padding: 30px 1rem;
+    text-align: center;
 }
-
-    .footer > div {
-        display: inline-block;
-    }
-
-        .footer > div:first-child {
-            float: right;
-        }
-
-    .footer img {
-        display: block;
-        margin-bottom: 20px;
-    }
 
     .footer i {
         color: rgb(254, 203, 4);
         font-size: 4rem;
-        float: left;
+        display: block;
+        margin-bottom: 50px;
     }
 
         .footer i > span {
@@ -191,11 +179,25 @@ textarea {
             color: #e0e7e9;
         }
 
-    .footer ul {
-        list-style: none;
-        margin: 20px 2rem;
+@media(min-width:820px) {
+    .footer .logo-holder {
+        display: inline-block;
+        text-align: left;
     }
 
-        .footer ul > li {
-            margin-bottom: 30px;
-        }
+    .footer .address-holder {
+        display: inline-block;
+        text-align: right;
+        padding-right: 30px;
+    }
+}
+
+.footer ul {
+    list-style: none;
+    padding: 0;
+    margin-top: -30px;
+}
+
+    .footer ul > li {
+        margin-bottom: 30px;
+    }
