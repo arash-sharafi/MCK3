@@ -1,0 +1,36 @@
+﻿@model List<Mock3.ViewModels.UserVoucherDetailsViewModel>
+@{
+    ViewBag.Title = "جزئیات ووچرهای من";
+}
+
+<h2>جزئیات ووچرهای شما</h2>
+
+<div class="container">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>شماره ووچر</td>
+                    <td>تاریخ خرید</td>
+                    <td>تاریخ انقضاء</td>
+                    <td>نام خریدار</td>
+                    <td>تاریخ آزمون</td>
+                    <td>روز و ساعت</td>
+                </tr>
+            </thead>
+            @foreach (var voucher in Model)
+            {
+                <tr>
+                    <td><span class="voucher-format">@voucher.VoucherNo</span></td>
+                    <td>@voucher.VoucherPurchaseDate</td>
+                    <td>@voucher.VoucherExpirationDate</td>
+                    <td>@voucher.VoucherPurchaser</td>
+                    <td>@voucher.ExamDate</td>
+                    <td>@voucher.ExamDesc</td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+

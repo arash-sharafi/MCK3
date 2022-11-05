@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Models;
+using Mock3.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 
@@ -44,8 +48,101 @@ namespace Mock3.Controllers
 
             _context.SaveChanges();
 
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
+
+        public ActionResult VouchersDetails()
+        {
+            var currentUserId = User.Identity.GetUserId();
+
+            var userVouchersViewModel = new List<UserVoucherDetailsViewModel>();
+
+            var participatedExams = _context.UserExams
+                .Where(x => x.UserId.Equals(currentUserId))
+                .Include(x => x.Voucher)
+                .Include(x => x.Voucher.User)
+                .Include(x => x.Exam);
+
+            foreach (var participatedExam in participatedExams)
+            {
+                userVouchersViewModel.Add(new UserVoucherDetailsViewModel()
+                {
+                    ExamDate = participatedExam.Exam.StartDate,
+                    ExamDesc = participatedExam.Exam.Description,
+                    ExamId = participatedExam.ExamId,
+                    VoucherId = participatedExam.VoucherId,
+                    VoucherNo = participatedExam.Voucher.VoucherNo,
+                    VoucherPurchaseDate = participatedExam.Voucher.CreateDate,
+                    VoucherExpirationDate = GetVoucherExpirationDate(
+                        createDate: participatedExam.Voucher.CreateDate,
+                        monthsToExpire: 6),
+                    VoucherPurchaser = participatedExam.Voucher.User.FirstName
+                                       + " " + participatedExam.Voucher.User.LastName
+                });
+            }
+
+            var userPurchasedVouchers = _context.Vouchers
+                .Where(x => x.UserId == currentUserId)
+                .Include(x => x.User).ToList();
+
+            foreach (var purchasedVoucher in userPurchasedVouchers)
+            {
+                var addedBefore = userVouchersViewModel
+                    .FirstOrDefault(x =>
+                        x.VoucherId == purchasedVoucher.Id);
+
+                if (addedBefore != null)
+                {
+                    continue;
+                }
+
+                userVouchersViewModel.Add(new UserVoucherDetailsViewModel()
+                {
+                    ExamDate = "-",
+                    VoucherId = purchasedVoucher.Id,
+                    VoucherNo = purchasedVoucher.VoucherNo,
+                    VoucherExpirationDate = GetVoucherExpirationDate(
+                        createDate: purchasedVoucher.CreateDate, monthsToExpire: 6),
+                    ExamDesc = "-",
+                    VoucherPurchaseDate = purchasedVoucher.CreateDate,
+                    VoucherPurchaser = purchasedVoucher.User.FirstName
+                                       + " " + purchasedVoucher.User.LastName
+
+                });
+            }
+
+            return View(userVouchersViewModel);
+        }
+
+        private string GetVoucherExpirationDate(string createDate, int monthsToExpire)
+        {
+            var createDateInt = Int32.Parse(
+                createDate.Replace("/", string.Empty));
+
+
+            int exYear = Int32.Parse(Convert.ToString(createDateInt).Substring(0, 4));
+            int exMonth = Int32.Parse(Convert.ToString(createDateInt).Substring(4, 2));
+            int exDay = Int32.Parse(Convert.ToString(createDateInt).Substring(6, 2));
+
+            PersianCalendar pc = new PersianCalendar();
+            DateTime dt = new DateTime(exYear, exMonth, exDay, pc);
+            var monthsLater = dt.AddMonths(monthsToExpire);
+
+            string expirationDate = pc.GetYear(monthsLater).ToString()
+                                    + "/"
+                                    + (pc.GetMonth(monthsLater).ToString().Length == 2 ?
+                                        pc.GetMonth(monthsLater).ToString() :
+                                        "0" + pc.GetMonth(monthsLater).ToString())
+                                    +"/"
+                                    + (pc.GetDayOfMonth(monthsLater).ToString().Length == 2 ?
+                                        pc.GetDayOfMonth(monthsLater).ToString() :
+                                        "0" + pc.GetDayOfMonth(monthsLater).ToString());
+
+            return expirationDate;
+        }
+
+
+
 
         private string Today()
         {

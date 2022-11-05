@@ -233,6 +233,8 @@
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\ResetPasswordViewModel.cs" />
     <Compile Include="ViewModels\SendCodeViewModel.cs" />
+    <Compile Include="ViewModels\UserExamDetailsViewModel.cs" />
+    <Compile Include="ViewModels\UserVoucherDetailsViewModel.cs" />
     <Compile Include="ViewModels\VerifyCodeViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -312,6 +314,7 @@
     <Content Include="Views\Vouchers\Buy.cshtml" />
     <Content Include="Views\Exams\Index.cshtml" />
     <Content Include="Views\Exams\Register.cshtml" />
+    <Content Include="Views\Vouchers\VouchersDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\Areas\ToeflMgt\Controllers\" />
