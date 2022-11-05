@@ -212,12 +212,15 @@
     <Compile Include="Migrations\202210272054579_ExtendApplicationUser.Designer.cs">
       <DependentUpon>202210272054579_ExtendApplicationUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202211051641097_UpdateUserExamTable.cs" />
+    <Compile Include="Migrations\202211051641097_UpdateUserExamTable.Designer.cs">
+      <DependentUpon>202211051641097_UpdateUserExamTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Exam.cs" />
-    <Compile Include="Models\ExamScore.cs" />
     <Compile Include="ViewModels\ExternalLoginConfirmationViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\UserExam.cs" />
@@ -315,6 +318,7 @@
     <Content Include="Views\Exams\Index.cshtml" />
     <Content Include="Views\Exams\Register.cshtml" />
     <Content Include="Views\Vouchers\VouchersDetails.cshtml" />
+    <Content Include="Views\Exams\ExamsDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\Areas\ToeflMgt\Controllers\" />
@@ -354,6 +358,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202210272054579_ExtendApplicationUser.resx">
       <DependentUpon>202210272054579_ExtendApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211051641097_UpdateUserExamTable.resx">
+      <DependentUpon>202211051641097_UpdateUserExamTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,0 +1,42 @@
+﻿@model List<Mock3.ViewModels.UserExamDetailsViewModel>
+@{
+    ViewBag.Title = "آزمونهای من";
+}
+
+<h2>جزئیات آزمونهای شما</h2>
+
+
+<div class="container">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>تاریخ برگزاری آزمون</td>
+                    <td>روز و ساعت</td>
+                    <td>شماره ووچر</td>
+                    <td>Reading</td>
+                    <td>Listening</td>
+                    <td>Speaking</td>
+                    <td>Writing</td>
+                    <td>Total</td>
+                </tr>
+            </thead>
+            @foreach (var exam in Model)
+            {
+                <tr>
+                    <td>@exam.ExamDate</td>
+                    <td>@exam.ExamDesc</td>
+                    <td><span class="voucher-format">@exam.VoucherNo</span></td>
+                    <td>@exam.ReadingScore</td>
+                    <td>@exam.ListeningScore</td>
+                    <td>@exam.SpeakingScore</td>
+                    <td>@exam.WritingScore</td>
+                    <td>@exam.TotalScore</td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+
+

@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Models;
+using Mock3.ViewModels;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -116,6 +119,47 @@ namespace Mock3.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public ActionResult ExamsDetails()
+        {
+            var currentUserId = User.Identity.GetUserId();
+
+
+            var userRegisteredExams = _context.UserExams
+                .Where(x => x.UserId.Equals(currentUserId))
+                .Include(x=>x.Exam)
+                .Include(x=>x.Voucher).ToList();
+
+            var userExamsDetailsViewModel = new List<UserExamDetailsViewModel>();
+
+            foreach (var regExam in userRegisteredExams)
+            {
+                userExamsDetailsViewModel.Add(new UserExamDetailsViewModel()
+                {
+                    ExamDate = regExam.Exam.StartDate,
+                    ExamDesc = regExam.Exam.Description,
+                    ExamName = regExam.Exam.Name,
+                    ExamId = regExam.ExamId,
+                    ListeningScore = regExam.ListeningScore,
+                    ReadingScore = regExam.ReadingScore,
+                    SpeakingScore = regExam.SpeakingScore,
+                    WritingScore = regExam.WritingScore,
+                    ScoredDate = regExam.ScoreSubmitDate,
+                    TotalScore = TotalScore(participatedExam:regExam),
+                    VoucherNo = regExam.Voucher.VoucherNo
+                });
+            }
+
+            return View(userExamsDetailsViewModel);
+        }
+
+        private double TotalScore(UserExam participatedExam)
+        {
+            return participatedExam.ListeningScore
+                   + participatedExam.ReadingScore
+                   + participatedExam.SpeakingScore
+                   + participatedExam.WritingScore;
         }
 
         private string ExamRegisterStatus(Exam exam)
