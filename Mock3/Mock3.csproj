@@ -167,7 +167,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Admin\Areas\ToeflMgt\ToeflMgtAreaRegistration.cs" />
+    <Compile Include="Areas\Mgt\MgtAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ExamsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -252,7 +252,6 @@
     <Content Include="images\1.jpg" />
     <Content Include="images\Logo-White.png" />
     <Content Include="images\Logo-Yellow.png" />
-    <Content Include="Admin\Areas\ToeflMgt\Views\web.config" />
     <Content Include="fonts\IRANSansWeb%28FaNum%29.woff2" />
     <Content Include="fonts\IRANSansWeb%28FaNum%29_Bold.woff2" />
     <Content Include="fonts\IRANSansWeb%28FaNum%29_Light.woff2" />
@@ -266,6 +265,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Areas\Mgt\Views\web.config" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="images\telephone.svg" />
     <Content Include="Scripts\bootstrap.js" />
@@ -321,10 +321,10 @@
     <Content Include="Views\Exams\ExamsDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Admin\Areas\ToeflMgt\Controllers\" />
-    <Folder Include="Admin\Areas\ToeflMgt\Data\" />
-    <Folder Include="Admin\Areas\ToeflMgt\Views\Shared\" />
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Mgt\Controllers\" />
+    <Folder Include="Areas\Mgt\Data\" />
+    <Folder Include="Areas\Mgt\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
