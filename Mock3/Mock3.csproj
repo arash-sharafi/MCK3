@@ -167,6 +167,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Areas\Mgt\Controllers\ConsoleController.cs" />
     <Compile Include="Areas\Mgt\MgtAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ExamsController.cs" />
@@ -266,6 +267,9 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Areas\Mgt\Views\web.config" />
+    <Content Include="Areas\Mgt\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Mgt\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Mgt\Views\Console\Index.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="images\telephone.svg" />
     <Content Include="Scripts\bootstrap.js" />
@@ -322,9 +326,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Mgt\Controllers\" />
     <Folder Include="Areas\Mgt\Data\" />
-    <Folder Include="Areas\Mgt\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
