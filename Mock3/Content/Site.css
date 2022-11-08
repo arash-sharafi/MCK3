@@ -128,8 +128,13 @@ textarea {
     }
 }
 
-/* Page Styles */
 
+.table-responsive {
+    overflow-x: visible;
+}
+
+
+/* Page Styles */
 .voucher {
     display: inline-block;
     width: 80%;
@@ -207,4 +212,9 @@ textarea {
     font-family: arial;
     font-weight: bold;
     font-size: 1.5rem;
+}
+
+
+.table-cell {
+    vertical-align: middle !important;
 }

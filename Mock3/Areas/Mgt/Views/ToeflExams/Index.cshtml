@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Mock3.Models.Exam>
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="container">
+    <h2>مدیریت آزمونهای تافل</h2>
+    <br />
+    @Html.ActionLink("آزمون جدید", "Create", null, new { @class = "btn btn-primary" })
+    <hr/>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>عنوان آزمون</td>
+                    <td>تاریخ برگزاری</td>
+                    <td>روز و ساعت</td>
+                    <td>ظرفیت کل</td>
+                    <td>ظرفیت باقیمانده</td>
+                    <td></td>
+                </tr>
+            </thead>
+            @foreach (var exam in Model)
+            {
+                <tr>
+                    <td class="table-cell">@exam.Name</td>
+                    <td class="table-cell">@exam.StartDate</td>
+                    <td class="table-cell">@exam.Description</td>
+                    <td class="table-cell">@exam.Capacity</td>
+                    <td class="table-cell">@exam.RemainingCapacity</td>
+                    <td>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">عملیات<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("ویرایش آزمون", "Edit", "ToeflExams", new { id = @exam.Id }, null)</li>
+                                    <li>@Html.ActionLink("حذف آزمون", "Delete", "ToeflExams", new { id = @exam.Id }, null)</li>
+                                </ul>
+                            <li />
+                        </ul>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+
