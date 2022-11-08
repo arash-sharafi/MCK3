@@ -169,7 +169,9 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Areas\Mgt\Controllers\ConsoleController.cs" />
     <Compile Include="Areas\Mgt\Controllers\ToeflExamsController.cs" />
+    <Compile Include="Areas\Mgt\Controllers\ToeflExamTitlesController.cs" />
     <Compile Include="Areas\Mgt\MgtAreaRegistration.cs" />
+    <Compile Include="Areas\Mgt\ViewModels\ExamTitleMgtViewModel.cs" />
     <Compile Include="Areas\Mgt\ViewModels\ExamMgtViewModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ExamsController.cs" />
@@ -219,7 +221,12 @@
     <Compile Include="Migrations\202211051641097_UpdateUserExamTable.Designer.cs">
       <DependentUpon>202211051641097_UpdateUserExamTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202211081637372_CreateExamTitlesTable.cs" />
+    <Compile Include="Migrations\202211081637372_CreateExamTitlesTable.Designer.cs">
+      <DependentUpon>202211081637372_CreateExamTitlesTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ExamTitle.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -275,6 +282,9 @@
     <Content Include="Areas\Mgt\Views\ToeflExams\Index.cshtml" />
     <Content Include="Areas\Mgt\Views\ToeflExams\Create.cshtml" />
     <Content Include="Areas\Mgt\Views\ToeflExams\Edit.cshtml" />
+    <Content Include="Areas\Mgt\Views\ToeflExamTitles\Index.cshtml" />
+    <Content Include="Areas\Mgt\Views\ToeflExamTitles\Create.cshtml" />
+    <Content Include="Areas\Mgt\Views\ToeflExamTitles\Edit.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="images\telephone.svg" />
     <Content Include="Scripts\bootstrap.js" />
@@ -368,6 +378,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202211051641097_UpdateUserExamTable.resx">
       <DependentUpon>202211051641097_UpdateUserExamTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211081637372_CreateExamTitlesTable.resx">
+      <DependentUpon>202211081637372_CreateExamTitlesTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -10,6 +10,7 @@ namespace Mock3.Models
         public DbSet<Exam> Exams { get; set; }
         public DbSet<UserExam> UserExams { get; set; }
 
+        public DbSet<ExamTitle> ExamTitles { get; set; }
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -20,6 +21,6 @@ namespace Mock3.Models
         {
             return new ApplicationDbContext();
         }
-        
+
     }
 }
