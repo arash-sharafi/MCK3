@@ -42,18 +42,6 @@ namespace Mock3.Controllers
             return View(examsListViewModel);
         }
 
-        private bool IsUserRegisteredInExamBefore(Exam exam)
-        {
-            var currentUserId = User.Identity.GetUserId();
-
-            var userExamRecord = _context.UserExams
-                .FirstOrDefault(x => x.UserId == currentUserId
-                                     && x.ExamId == exam.Id);
-            if (userExamRecord != null)
-                return true;
-            else
-                return false;
-        }
 
         public ActionResult Register(int id)
         {
@@ -173,6 +161,19 @@ namespace Mock3.Controllers
                 return "ظرفیت در حال تکمیل است";
 
             return "در حال ثبت نام";
+        }
+
+        private bool IsUserRegisteredInExamBefore(Exam exam)
+        {
+            var currentUserId = User.Identity.GetUserId();
+
+            var userExamRecord = _context.UserExams
+                .FirstOrDefault(x => x.UserId == currentUserId
+                                     && x.ExamId == exam.Id);
+            if (userExamRecord != null)
+                return true;
+            else
+                return false;
         }
     }
 }

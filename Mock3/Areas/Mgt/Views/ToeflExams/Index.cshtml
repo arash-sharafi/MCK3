@@ -37,6 +37,7 @@
                                 <ul class="dropdown-menu">
                                     <li>@Html.ActionLink("ویرایش آزمون", "Edit", "ToeflExams", new { id = @exam.Id }, null)</li>
                                     <li>@Html.ActionLink("حذف آزمون", "Delete", "ToeflExams", new { id = @exam.Id }, null)</li>
+                                    <li>@Html.ActionLink("شرکت کنندگان", "Index", "ToeflParticipants", new { id = @exam.Id }, null)</li>
                                 </ul>
                             <li />
                         </ul>

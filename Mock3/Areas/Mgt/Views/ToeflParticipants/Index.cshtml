@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Mock3.Areas.Mgt.ViewModels.ParticipantMgtViewModel>
+@{
+    ViewBag.Title = "Participants";
+}
+
+<div class="container">
+    <h2>لیست شرکت کنندگان آزمون @Model.First().ExamDesc</h2>
+    <br />
+    <hr />
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>ردیف</td>
+                    <td>اطلاعات آزمون</td>
+                    <td>نام</td>
+                    <td>نام خانوادگی</td>
+                    <td>شماره ووچر</td>
+                    <td>عنوان آزمون</td>
+                    <td>Reading</td>
+                    <td>Listening</td>
+                    <td>Speaking</td>
+                    <td>Writing</td>
+                    <td></td>
+                </tr>
+            </thead>
+            @{int rowIndex = 0;}
+            @foreach (var participant in Model)
+            {
+                ++rowIndex;
+                <tr>
+                    <td class="table-cell">@rowIndex</td>
+                    <td class="table-cell">@participant.ExamDesc</td>
+                    <td class="table-cell">@participant.FirstName</td>
+                    <td class="table-cell">@participant.LastName</td>
+                    <td class="table-cell voucher-format">@participant.VoucherNo</td>
+                    <td class="table-cell">@participant.ExamTitle</td>
+                    <td class="table-cell">@participant.ReadingScore</td>
+                    <td class="table-cell">@participant.ListeningScore</td>
+                    <td class="table-cell">@participant.SpeakingScore</td>
+                    <td class="table-cell">@participant.WritingScore</td>
+                    <td>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">عملیات<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("ثبت عنوان آزمون", "SetExamTitle", "ToeflParticipants", new { id = @participant.UserExamId }, null)</li>
+                                </ul>
+                            <li />
+                        </ul>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>

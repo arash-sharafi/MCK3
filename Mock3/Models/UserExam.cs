@@ -29,5 +29,9 @@ namespace Mock3.Models
 
         public int VoucherId { get; set; }
         public Voucher Voucher { get; set; }
+
+        public int? ExamTitleId { get; set; }
+        public ExamTitle ExamTitle { get; set; }
+
     }
 }
