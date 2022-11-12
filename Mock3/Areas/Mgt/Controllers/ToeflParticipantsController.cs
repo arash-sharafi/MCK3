@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace Mock3.Areas.Mgt.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ToeflParticipantsController : Controller
     {
         private readonly ApplicationDbContext _context;
