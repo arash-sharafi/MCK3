@@ -1,9 +1,9 @@
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Linq;
+
 namespace Mock3.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
     internal sealed class Configuration : DbMigrationsConfiguration<Mock3.Models.ApplicationDbContext>
     {
@@ -18,6 +18,13 @@ namespace Mock3.Migrations
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
+
+            if (!context.Roles.Any())
+            {
+                context.Roles.AddOrUpdate(
+                    new IdentityRole { Name = "User" }
+                    , new IdentityRole { Name = "Admin" });
+            }
         }
     }
 }
