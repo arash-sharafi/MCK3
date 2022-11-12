@@ -40,8 +40,9 @@ namespace Mock3.Areas.Mgt.Controllers
                 Name = model.Name,
                 StartDate = model.StartDate,
                 Capacity = model.Capacity,
+                RemainingCapacity = model.Capacity,
                 Description = model.Description,
-                IsOpen = model.IsOpen
+                IsOpen = true
             });
 
             _context.SaveChanges();
@@ -90,6 +91,8 @@ namespace Mock3.Areas.Mgt.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
             var exam = _context.Exams.Find(id);
@@ -101,6 +104,41 @@ namespace Mock3.Areas.Mgt.Controllers
 
             return RedirectToAction("Index");
 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CloseRegistration(int id)
+        {
+            var exam = _context.Exams.Find(id);
+
+            if (exam == null) return RedirectToAction("Index");
+
+            if (exam.IsOpen)
+            {
+                exam.IsOpen = false;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult OpenRegistration(int id)
+        {
+            var exam = _context.Exams.Find(id);
+
+            if (exam == null) return RedirectToAction("Index");
+
+            if (!exam.IsOpen)
+            {
+                exam.IsOpen = true;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
         }
 
     }

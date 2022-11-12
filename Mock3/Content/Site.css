@@ -218,3 +218,9 @@ textarea {
 .table-cell {
     vertical-align: middle !important;
 }
+
+.button-link {
+    border-style: none;
+    background-color: transparent;
+    padding: 5px 20px;
+}
