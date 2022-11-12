@@ -62,26 +62,26 @@ namespace Mock3.Areas.Mgt.Controllers
 
         public async Task<ActionResult> SetExamTitle(int id)
         {
-            var participantRecord = await _context.UserExams
+            var participantExamRecord = await _context.UserExams
                 .Include(x => x.User)
                 .Include(x => x.Exam)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
 
-            if (participantRecord == null) return RedirectToAction("Index");
+            if (participantExamRecord == null) return RedirectToAction("Index");
 
             var examTitles = await _context.ExamTitles.ToListAsync();
 
             var viewModel = new SetExamTitleForParticipantViewModel
             {
-                UserExamId = participantRecord.Id,
-                ExamId = participantRecord.ExamId,
-                Email = participantRecord.User.Email,
-                ExamDesc = participantRecord.Exam.Description,
-                FullName = participantRecord.User.FirstName + " " +
-                           participantRecord.User.LastName,
-                NationalCode = participantRecord.User.NationalCode,
-                ExamTitleId = participantRecord.ExamTitleId ?? 0,
+                UserExamId = participantExamRecord.Id,
+                ExamId = participantExamRecord.ExamId,
+                Email = participantExamRecord.User.Email,
+                ExamDesc = participantExamRecord.Exam.Description,
+                FullName = participantExamRecord.User.FirstName + " " +
+                           participantExamRecord.User.LastName,
+                NationalCode = participantExamRecord.User.NationalCode,
+                ExamTitleId = participantExamRecord.ExamTitleId ?? 0,
                 ExamTitles = examTitles
             };
 
@@ -126,6 +126,82 @@ namespace Mock3.Areas.Mgt.Controllers
 
 
             modifiedParticipantRecord.ExamTitleId = viewModel.ExamTitleId;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { id = viewModel.ExamId });
+        }
+
+
+        public async Task<ActionResult> SubmitScores(int id)
+        {
+            var participantExamRecord = await _context.UserExams
+                .Include(x => x.User)
+                .Include(x => x.Exam)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (participantExamRecord == null) return RedirectToAction("Index");
+
+            var viewModel = new SubmitScoresForParticipantViewModel
+            {
+                ExamId = participantExamRecord.ExamId,
+                ExamDesc = participantExamRecord.Exam.Description,
+                Email = participantExamRecord.User.Email,
+                FullName = participantExamRecord.User.FirstName + " " +
+                           participantExamRecord.User.LastName,
+                NationalCode = participantExamRecord.User.NationalCode,
+                UserExamId = participantExamRecord.Id,
+                ReadingScore = participantExamRecord.ReadingScore,
+                ListeningScore = participantExamRecord.ListeningScore,
+                SpeakingScore = participantExamRecord.SpeakingScore,
+                WritingScore = participantExamRecord.WritingScore
+            };
+
+            return View(viewModel);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SubmitScores(SubmitScoresForParticipantViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                var participantExamRecord = await _context.UserExams
+                    .Include(x => x.User)
+                    .Include(x => x.Exam)
+                    .FirstOrDefaultAsync(x => x.Id == viewModel.UserExamId);
+
+
+                if (participantExamRecord == null) return RedirectToAction("Index");
+
+
+                var newViewModel = new SubmitScoresForParticipantViewModel
+                {
+                    ExamId = participantExamRecord.ExamId,
+                    ExamDesc = participantExamRecord.Exam.Description,
+                    Email = participantExamRecord.User.Email,
+                    FullName = participantExamRecord.User.FirstName + " " +
+                               participantExamRecord.User.LastName,
+                    NationalCode = participantExamRecord.User.NationalCode,
+                    UserExamId = participantExamRecord.Id,
+                    ReadingScore = participantExamRecord.ReadingScore,
+                    ListeningScore = participantExamRecord.ListeningScore,
+                    SpeakingScore = participantExamRecord.SpeakingScore,
+                    WritingScore = participantExamRecord.WritingScore
+                };
+                return View(newViewModel);
+            }
+
+            var modifiedParticipantRecord = await _context.UserExams.FindAsync(viewModel.UserExamId);
+
+            if (modifiedParticipantRecord == null) return RedirectToAction("Index", new { id = viewModel.ExamId });
+
+
+            modifiedParticipantRecord.ReadingScore = viewModel.ReadingScore;
+            modifiedParticipantRecord.ListeningScore = viewModel.ListeningScore;
+            modifiedParticipantRecord.SpeakingScore = viewModel.SpeakingScore;
+            modifiedParticipantRecord.WritingScore = viewModel.WritingScore;
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", new { id = viewModel.ExamId });
