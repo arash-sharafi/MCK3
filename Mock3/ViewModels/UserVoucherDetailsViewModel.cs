@@ -1,4 +1,6 @@
-﻿namespace Mock3.ViewModels
+﻿using Microsoft.Ajax.Utilities;
+
+namespace Mock3.ViewModels
 {
     public class UserVoucherDetailsViewModel
     {
@@ -10,5 +12,16 @@
         public int VoucherId { get; set; }
         public string VoucherNo { get; set; }
         public string VoucherPurchaser { get; set; }
+        public VoucherStatus CurrentStatus { get; set; }
+        public string CurrentStatusDesc { get; set; }
     }
+
+    public enum VoucherStatus
+    {
+        ExamIsPassed,
+        RegisteredInAnExam,
+        Expired,
+        ReadyToUse
+    }
+
 }

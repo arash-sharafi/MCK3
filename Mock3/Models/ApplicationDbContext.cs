@@ -9,8 +9,10 @@ namespace Mock3.Models
         public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<UserExam> UserExams { get; set; }
-
         public DbSet<ExamTitle> ExamTitles { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<PurchaseType> PurchaseTypes { get; set; }
+
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)

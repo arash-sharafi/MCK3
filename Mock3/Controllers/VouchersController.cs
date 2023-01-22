@@ -65,6 +65,7 @@ namespace Mock3.Controllers
 
             foreach (var participatedExam in participatedExams)
             {
+                var voucherStatusDetails = GetUsedVoucherStatus(participatedExam.Exam.StartDate);
                 userVouchersViewModel.Add(new UserVoucherDetailsViewModel()
                 {
                     ExamDate = participatedExam.Exam.StartDate,
@@ -77,7 +78,9 @@ namespace Mock3.Controllers
                         createDate: participatedExam.Voucher.CreateDate,
                         monthsToExpire: 6),
                     VoucherPurchaser = participatedExam.Voucher.User.FirstName
-                                       + " " + participatedExam.Voucher.User.LastName
+                                       + " " + participatedExam.Voucher.User.LastName,
+                    CurrentStatus = voucherStatusDetails.Item1,
+                    CurrentStatusDesc = voucherStatusDetails.Item2
                 });
             }
 
@@ -96,6 +99,9 @@ namespace Mock3.Controllers
                     continue;
                 }
 
+
+                var voucherStatusDetails = GetFreeVoucherStatus(purchasedVoucher);
+
                 userVouchersViewModel.Add(new UserVoucherDetailsViewModel()
                 {
                     ExamDate = "-",
@@ -106,12 +112,174 @@ namespace Mock3.Controllers
                     ExamDesc = "-",
                     VoucherPurchaseDate = purchasedVoucher.CreateDate,
                     VoucherPurchaser = purchasedVoucher.User.FirstName
-                                       + " " + purchasedVoucher.User.LastName
+                                       + " " + purchasedVoucher.User.LastName,
+                    CurrentStatus = voucherStatusDetails.Item1,
+                    CurrentStatusDesc = voucherStatusDetails.Item2
 
                 });
             }
 
             return View(userVouchersViewModel);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult VouchersDetails(int voucherId)
+        {
+            var voucher = _context.Vouchers.FirstOrDefault(x => x.Id == voucherId);
+            if (voucher == null)
+                return RedirectToAction("VouchersDetails");
+
+            string expirationDateString = GetVoucherExpirationDate(voucher.CreateDate, 6);
+            int expirationDate = Int32.Parse(expirationDateString.Replace("/", ""));
+
+
+            string currentUserId = User.Identity.GetUserId();
+            var currentUser = _context.Users.FirstOrDefault(x => x.Id == currentUserId);
+
+            if (currentUser == null)
+            {
+                return RedirectToAction("VouchersDetails");
+            }
+
+            //Check for connection to this voucher id and current user
+            var voucherForUser = _context.UserExams.FirstOrDefault(x => x.VoucherId == voucherId &&
+                                                                        x.UserId.Equals(currentUserId));
+            if (voucherForUser == null)
+            {
+                return RedirectToAction("VouchersDetails");
+            }
+
+            int examDate = Int32.Parse(_context.Exams.FirstOrDefault(x => x.Id == voucherForUser.ExamId)
+                .StartDate.Replace("/", string.Empty));
+
+            int exYear = Int32.Parse(Convert.ToString(examDate).Substring(0, 4));
+            int exMonth = Int32.Parse(Convert.ToString(examDate).Substring(4, 2));
+            int exDay = Int32.Parse(Convert.ToString(examDate).Substring(6, 2));
+
+            PersianCalendar pc = new PersianCalendar();
+            DateTime dt = new DateTime(exYear, exMonth, exDay, pc);
+            var yesterday = dt.AddDays(-1);
+
+            string beforeExamDateStr = pc.GetYear(yesterday).ToString()
+                                       + (pc.GetMonth(yesterday).ToString().Length == 2 ?
+                                           pc.GetMonth(yesterday).ToString() :
+                                           "0" + pc.GetMonth(yesterday).ToString())
+                                       + (pc.GetDayOfMonth(yesterday).ToString().Length == 2 ?
+                                           pc.GetDayOfMonth(yesterday).ToString() :
+                                           "0" + pc.GetDayOfMonth(yesterday).ToString());
+
+            int beforeExamDate = Int32.Parse(beforeExamDateStr);
+
+            int today = Int32.Parse(Today().Replace("/", string.Empty));
+
+            bool isVoucherExpired = IsVoucherExpired(expirationDate);
+
+            if (today >= beforeExamDate)
+            {
+                TempData["Message"] = "فرصت تغییر تاریخ تا ابتدای روز قبل از آزمون می باشد و متاسفانه در این زمان امکان تغییر تاریخ میسر نمی باشد.";
+                return RedirectToAction("VouchersDetails");
+            }
+
+            if (isVoucherExpired)
+            {
+                TempData["Message"] = "تاریخ انقضاء این ووچر فرا رسیده است و در این حالت تغییر تاریخ امکانپذیر نیست.";
+                return RedirectToAction("VouchersDetails");
+            }
+
+            //Real Payment system confirmation goes here
+            bool paymentConfirmed = true;
+
+            if (paymentConfirmed)
+            {
+                if (ReleaseVoucher(voucher))
+                {
+                    TempData["Message"] = "ووچر مورد نظر هم اکنون قابل استفاده است.";
+                    return RedirectToAction("VouchersDetails");
+                }
+                else
+                {
+                    TempData["Message"] = "بروز خطا در آزادسازی ووچر.";
+                    return RedirectToAction("VouchersDetails");
+                }
+
+            }
+
+
+            return View();
+        }
+
+
+        private bool ReleaseVoucher(Voucher voucher)
+        {
+            var invoice = new Invoice()
+            {
+                Price = "60000",
+                Description = "آزادسازی ووچر آزمون آزمایشی تافل به شماره " + voucher.VoucherNo,
+                PurchaseTypeId = (int)PurchaseTypeEnum.ReleaseVoucher,
+                UserId = User.Identity.GetUserId()
+            };
+
+            var registeredExam = _context.UserExams.FirstOrDefault(x => x.VoucherId == voucher.Id);
+
+            if (registeredExam == null)
+            {
+                return false;
+            }
+
+
+            var exam = _context.Exams.FirstOrDefault(x => x.Id == registeredExam.ExamId);
+            if (exam == null)
+            {
+                return false;
+            }
+
+            _context.Invoices.Add(invoice);
+            _context.UserExams.Remove(registeredExam);
+            exam.RemainingCapacity += 1;
+
+            _context.SaveChanges();
+
+            return true;
+        }
+
+        private bool IsVoucherExpired(int expirationDate)
+        {
+            int todayDateValue = Int32.Parse(Today().Replace("/", ""));
+            return todayDateValue > expirationDate;
+        }
+
+        private (VoucherStatus, string) GetUsedVoucherStatus(string examStartDate)
+        {
+            int examDate = Int32.Parse(examStartDate.Replace("/", string.Empty));
+            int today = Int32.Parse(Today().Replace("/", string.Empty));
+
+            var result = today < examDate ? VoucherStatus.RegisteredInAnExam : VoucherStatus.ExamIsPassed;
+
+            string statusText = "";
+            if (result == VoucherStatus.ExamIsPassed)
+                statusText = "آزمون برگزار شده است";
+
+            return (result, statusText);
+        }
+
+
+
+        private (VoucherStatus, string) GetFreeVoucherStatus(Voucher voucher)
+        {
+            int today = Int32.Parse(Today().Replace("/", string.Empty));
+            int voucherExpirationDate = Int32.Parse(GetVoucherExpirationDate(voucher.CreateDate, 6).Replace("/", string.Empty));
+
+            var result = today > voucherExpirationDate ? VoucherStatus.Expired : VoucherStatus.ReadyToUse;
+
+            string statusText;
+            if (result == VoucherStatus.Expired)
+                statusText = "تاریخ استفاده ووچر به پایان رسیده است";
+            else
+                statusText = "ووچر قابل استفاده می باشد";
+
+            return (result, statusText);
         }
 
         private string GetVoucherExpirationDate(string createDate, int monthsToExpire)
@@ -133,7 +301,7 @@ namespace Mock3.Controllers
                                     + (pc.GetMonth(monthsLater).ToString().Length == 2 ?
                                         pc.GetMonth(monthsLater).ToString() :
                                         "0" + pc.GetMonth(monthsLater).ToString())
-                                    +"/"
+                                    + "/"
                                     + (pc.GetDayOfMonth(monthsLater).ToString().Length == 2 ?
                                         pc.GetDayOfMonth(monthsLater).ToString() :
                                         "0" + pc.GetDayOfMonth(monthsLater).ToString());

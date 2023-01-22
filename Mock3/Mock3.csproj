@@ -233,8 +233,18 @@
     <Compile Include="Migrations\202211081646503_addExamTitleIdToUserExamTable.Designer.cs">
       <DependentUpon>202211081646503_addExamTitleIdToUserExamTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202301221626390_CreateInvoice_And_PurchaseType_Tables.cs" />
+    <Compile Include="Migrations\202301221626390_CreateInvoice_And_PurchaseType_Tables.Designer.cs">
+      <DependentUpon>202301221626390_CreateInvoice_And_PurchaseType_Tables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301221632260_PopulatePurchageTypeTable.cs" />
+    <Compile Include="Migrations\202301221632260_PopulatePurchageTypeTable.Designer.cs">
+      <DependentUpon>202301221632260_PopulatePurchageTypeTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ExamTitle.cs" />
+    <Compile Include="Models\Invoice.cs" />
+    <Compile Include="Models\PurchaseType.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -395,6 +405,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202211081646503_addExamTitleIdToUserExamTable.resx">
       <DependentUpon>202211081646503_addExamTitleIdToUserExamTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301221626390_CreateInvoice_And_PurchaseType_Tables.resx">
+      <DependentUpon>202301221626390_CreateInvoice_And_PurchaseType_Tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301221632260_PopulatePurchageTypeTable.resx">
+      <DependentUpon>202301221632260_PopulatePurchageTypeTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
