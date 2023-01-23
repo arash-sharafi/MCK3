@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Mock3.ViewModels.UserExamDetailsViewModel>
+﻿@using Mock3.ViewModels
+@model IEnumerable<Mock3.ViewModels.UserExamDetailsViewModel>
 @{
     ViewBag.Title = "آزمونهای من";
 }
@@ -7,6 +8,11 @@
 
 
 <div class="container">
+    <div class="text-center">
+        <strong>
+            @TempData["Message"]
+        </strong>
+    </div>
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -32,6 +38,19 @@
                     <td>@exam.SpeakingScore</td>
                     <td>@exam.WritingScore</td>
                     <td>@exam.TotalScore</td>
+                    <td>
+                        <strong>@exam.UrgentScoreDetails</strong>
+                        @{
+                            if (exam.UrgentScoreStatus == UrgentScoreStatus.AvailableForSubmit)
+                            {
+                                using (Html.BeginForm("UrgentScore", "Exams", new { examId = exam.ExamId }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-primary">درخواست نمره دهی اضطراری</button>
+                                }
+                            }
+                        }
+                    </td>
                 </tr>
             }
 

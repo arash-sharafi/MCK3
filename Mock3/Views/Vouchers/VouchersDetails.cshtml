@@ -41,7 +41,6 @@
                                 using (Html.BeginForm("VouchersDetails", "Vouchers", new { voucherId = voucher.VoucherId }))
                                 {
                                     @Html.AntiForgeryToken()
-                                    @Html.Hidden(voucher.VoucherId.ToString())
                                     <button class="btn btn-primary">آزادسازی ووچر</button>
                                 }
                             }

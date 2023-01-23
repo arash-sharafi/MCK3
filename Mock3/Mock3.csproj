@@ -241,10 +241,15 @@
     <Compile Include="Migrations\202301221632260_PopulatePurchageTypeTable.Designer.cs">
       <DependentUpon>202301221632260_PopulatePurchageTypeTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202301222329319_CreateUrgentScoresTable.cs" />
+    <Compile Include="Migrations\202301222329319_CreateUrgentScoresTable.Designer.cs">
+      <DependentUpon>202301222329319_CreateUrgentScoresTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ExamTitle.cs" />
     <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\PurchaseType.cs" />
+    <Compile Include="Models\UrgentScore.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -411,6 +416,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202301221632260_PopulatePurchageTypeTable.resx">
       <DependentUpon>202301221632260_PopulatePurchageTypeTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301222329319_CreateUrgentScoresTable.resx">
+      <DependentUpon>202301222329319_CreateUrgentScoresTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

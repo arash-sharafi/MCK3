@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Models;
 using Mock3.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -116,13 +118,15 @@ namespace Mock3.Controllers
 
             var userRegisteredExams = _context.UserExams
                 .Where(x => x.UserId.Equals(currentUserId))
-                .Include(x=>x.Exam)
-                .Include(x=>x.Voucher).ToList();
+                .Include(x => x.Exam)
+                .Include(x => x.Voucher).ToList();
 
             var userExamsDetailsViewModel = new List<UserExamDetailsViewModel>();
 
             foreach (var regExam in userRegisteredExams)
             {
+                var urgentScoreStatus = GetUrgentScoreStatus(regExam);
+
                 userExamsDetailsViewModel.Add(new UserExamDetailsViewModel()
                 {
                     ExamDate = regExam.Exam.StartDate,
@@ -134,13 +138,187 @@ namespace Mock3.Controllers
                     SpeakingScore = regExam.SpeakingScore,
                     WritingScore = regExam.WritingScore,
                     ScoredDate = regExam.ScoreSubmitDate,
-                    TotalScore = TotalScore(participatedExam:regExam),
-                    VoucherNo = regExam.Voucher.VoucherNo
+                    TotalScore = TotalScore(participatedExam: regExam),
+                    VoucherNo = regExam.Voucher.VoucherNo,
+                    UrgentScoreStatus = urgentScoreStatus.Status,
+                    UrgentScoreDetails = urgentScoreStatus.StatusDetails
                 });
             }
 
             return View(userExamsDetailsViewModel);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UrgentScore(int examId)
+        {
+            var exam = _context.Exams.FirstOrDefault(x => x.Id == examId);
+            if (exam == null)
+            {
+                return RedirectToAction("ExamsDetails");
+            }
+
+            string currentUserId = User.Identity.GetUserId();
+            ApplicationUser currentUser = _context.Users.FirstOrDefault(x => x.Id == currentUserId);
+
+
+            var userExam = _context.UserExams.FirstOrDefault(x => x.ExamId == examId && x.UserId == currentUserId);
+            if (userExam == null)
+            {
+                return RedirectToAction("ExamsDetails");
+            }
+
+            int examDate = Int32.Parse(exam.StartDate.Replace("/", ""));
+            int today = Today().IntigerValue;
+
+            if (examDate <= today)
+            {
+                return RedirectToAction("ExamsDetails");
+            }
+
+            //Actual payments goes here
+            var paymentConfirmed = true;
+
+            if (paymentConfirmed)
+            {
+                if (SubmitUrgentScore(userExam))
+                {
+                    TempData["Message"] = "درخواست نمره دهی اضطراری ثبت شده است.";
+                    return RedirectToAction("ExamsDetails");
+                }
+                else
+                {
+                    TempData["Message"] = "بروز خطا در ثبت نمره دهی اضطراری.";
+                    return RedirectToAction("ExamsDetails");
+                }
+            }
+
+            return RedirectToAction("ExamsDetails");
+        }
+
+        private bool SubmitUrgentScore(UserExam registeredExam)
+        {
+
+            var exam = _context.Exams.FirstOrDefault(x => x.Id == registeredExam.ExamId);
+            if (exam == null)
+            {
+                return false;
+            }
+
+
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var invoice = new Invoice()
+                    {
+                        Price = "40000",
+                        Description = "خرید نمره دهی اضطراری برای آزمون " + exam.Description,
+                        PurchaseTypeId = (int)PurchaseTypeEnum.BuyUrgentScore,
+                        UserId = User.Identity.GetUserId()
+                    };
+
+                    _context.Invoices.Add(invoice);
+                    _context.SaveChanges();
+
+                    UrgentScore newUSRequest = new UrgentScore()
+                    {
+                        InvoiceId = invoice.Id,
+                        UserExamId = registeredExam.Id,
+                        Status = (int)UrgentScoreStatus.Submitted,
+                        SubmitDate = Today().StringValue,
+                        VoucherId = registeredExam.VoucherId,
+                        UserId = User.Identity.GetUserId()
+                    };
+
+                    _context.UrgentScores.Add(newUSRequest);
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return false;
+                }
+
+            }
+        }
+
+        private (UrgentScoreStatus Status, string StatusDetails) GetUrgentScoreStatus(UserExam registeredExam)
+        {
+            int today = Today().IntigerValue;
+            int examDate = Convert.ToInt32(registeredExam.Exam.StartDate.Replace("/", ""));
+
+            var submittedUrgentScoreRequest = _context.UrgentScores
+                .FirstOrDefault(x => x.UserExamId == registeredExam.Id);
+
+            if (submittedUrgentScoreRequest == null)
+            {
+                if (today >= examDate)
+                {
+                    return (Status: UrgentScoreStatus.Unavailable, StatusDetails: "");
+                }
+                else
+                {
+                    return (Status: UrgentScoreStatus.AvailableForSubmit, StatusDetails: "");
+                }
+            }
+            else
+            {
+                var status = (UrgentScoreStatus)submittedUrgentScoreRequest.Status;
+                string details;
+
+                switch (status)
+                {
+                    case UrgentScoreStatus.Submitted:
+                        details = "درخواست نمره دهی اضطراری ثبت شده است";
+                        break;
+                    case UrgentScoreStatus.Processing:
+                        details = "درخواست نمره دهی اضطراری ثبت شده است";
+                        break;
+                    case UrgentScoreStatus.Unavailable:
+                    case UrgentScoreStatus.AvailableForSubmit:
+                    case UrgentScoreStatus.Done:
+                    default:
+                        details = "";
+                        break;
+                }
+
+                return (Status: status, StatusDetails: details);
+            }
+        }
+
+        private (string StringValue, int IntigerValue) Today()
+        {
+            var persian = new PersianCalendar();
+
+            var year = persian.GetYear(DateTime.Now).ToString();
+            string month;
+            string day;
+
+            if (persian.GetMonth(DateTime.Now) < 10)
+            {
+                month = "0" + persian.GetMonth(DateTime.Now).ToString();
+            }
+            else
+            {
+                month = persian.GetMonth(DateTime.Now).ToString();
+            }
+
+            if (persian.GetDayOfMonth(DateTime.Now) < 10)
+            {
+                day = "0" + persian.GetDayOfMonth(DateTime.Now).ToString();
+            }
+            else
+            {
+                day = persian.GetDayOfMonth(DateTime.Now).ToString();
+            }
+
+            return (year + "/" + month + "/" + day, Int32.Parse(year + month + day));
+        }
+
 
         private double TotalScore(UserExam participatedExam)
         {

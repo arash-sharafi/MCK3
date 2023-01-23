@@ -12,6 +12,7 @@ namespace Mock3.Models
         public DbSet<ExamTitle> ExamTitles { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<PurchaseType> PurchaseTypes { get; set; }
+        public DbSet<UrgentScore> UrgentScores { get; set; }
 
 
         public ApplicationDbContext()
