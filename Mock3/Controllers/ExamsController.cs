@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Enums;
 using Mock3.Models;
+using Mock3.Repositories;
 using Mock3.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -15,44 +16,44 @@ namespace Mock3.Controllers
     public class ExamsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ExamRepository _examRepository;
+        private readonly UserExamRepository _userExamRepository;
+        private readonly VoucherRepository _voucherRepository;
 
         public ExamsController()
         {
             _context = new ApplicationDbContext();
+
+            _examRepository = new ExamRepository(_context);
+            _voucherRepository = new VoucherRepository(_context);
+            _userExamRepository = new UserExamRepository(_context);
         }
         // GET: Exams
         public ActionResult Index()
         {
-            var exams = _context.Exams.ToList();
+            var exams = _examRepository
+                .GetExams()
+                .OrderByDescending(x => x.StartDate);
+
             var examsListViewModel = new ExamsListViewModel();
 
             foreach (var exam in exams)
             {
-                examsListViewModel.Exams.Add(new ExamViewModel
-                {
-                    RemainingCapacity = exam.RemainingCapacity,
-                    Description = exam.Description,
-                    Name = exam.Name,
-                    StartDate = exam.StartDate,
-                    Capacity = exam.Capacity,
-                    IsOpen = exam.IsOpen,
-                    RegisterStatus = ExamRegisterStatus(exam),
-                    IsUserRegisteredBefore = IsUserRegisteredInExamBefore(exam),
-                    Id = exam.Id
-                });
+                examsListViewModel.Exams.Add(GetExamViewModel(exam));
             }
 
             return View(examsListViewModel);
         }
 
 
-        public ActionResult Register(int id)
+
+        public ActionResult Register(int examId)
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Register(int id, RegisterExamViewModel model)
+        public ActionResult Register(int examId, RegisterExamViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -62,48 +63,48 @@ namespace Mock3.Controllers
 
 
 
-            var usedVoucher = _context.Vouchers.
-                FirstOrDefault(x => x.VoucherNo.Equals(model.VoucherNo));
+            var usedVoucher = _voucherRepository.GetVoucherByVoucherNumber(model.VoucherNo);
 
             if (usedVoucher == null)
-                return RedirectToAction("Index", "Home");
+                throw new NullReferenceException();
+
+
+
+            var voucherIsUsedBefore = _voucherRepository.GetVoucherById(usedVoucher.Id);
+
+            if (voucherIsUsedBefore != null)
+                throw new InvalidOperationException();
 
 
 
 
-            var voucherUsedBefore = _context.UserExams
-                .FirstOrDefault(x => x.VoucherId == usedVoucher.Id);
+            var userRegisteredBefore = _userExamRepository
+                .GetUserExamByForeignKeys(currentUserId, examId, usedVoucher.Id);
 
-            if (voucherUsedBefore != null)
-                return RedirectToAction("Index", "Home");
-
-
-
-
-            var userRegisteredBefore = _context.UserExams
-                .FirstOrDefault(x => x.UserId == currentUserId && x.ExamId == id
-                                                               && x.VoucherId == usedVoucher.Id);
             if (userRegisteredBefore != null)
-                return RedirectToAction("Index");
+                throw new InvalidOperationException();
 
 
 
             var examParticipantsCounter = 0;
-            if (_context.UserExams.Any())
+            if (_userExamRepository.Any())
             {
-                examParticipantsCounter = _context.UserExams.
-                    Count(x => x.ExamId == id);
+                examParticipantsCounter = _userExamRepository
+                    .GetUserExams(examId)
+                    .Count();
             }
 
-            _context.UserExams.Add(new UserExam
+            var newUserExam = new UserExam
             {
-                ExamId = id,
+                ExamId = examId,
                 UserId = currentUserId,
                 VoucherId = usedVoucher.Id,
                 ChairNo = (byte)++examParticipantsCounter
-            });
+            };
 
-            var registeredExam = _context.Exams.Find(id);
+            _userExamRepository.Add(newUserExam);
+
+            var registeredExam = _examRepository.GetExamById(examId);
             if (registeredExam != null)
                 registeredExam.RemainingCapacity -= 1;
 
@@ -197,6 +198,24 @@ namespace Mock3.Controllers
 
             return RedirectToAction("ExamsDetails");
         }
+
+
+        private ExamViewModel GetExamViewModel(Exam exam)
+        {
+            return new ExamViewModel
+            {
+                RemainingCapacity = exam.RemainingCapacity,
+                Description = exam.Description,
+                Name = exam.Name,
+                StartDate = exam.StartDate,
+                Capacity = exam.Capacity,
+                IsOpen = exam.IsOpen,
+                RegisterStatus = ExamRegisterStatus(exam),
+                IsUserRegisteredBefore = IsUserRegisteredInExamBefore(exam),
+                Id = exam.Id
+            };
+        }
+
 
         private bool SubmitUrgentScore(UserExam registeredExam)
         {

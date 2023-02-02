@@ -251,6 +251,9 @@
     <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\PurchaseType.cs" />
     <Compile Include="Models\UrgentScore.cs" />
+    <Compile Include="Repositories\ExamRepository.cs" />
+    <Compile Include="Repositories\UserExamRepository.cs" />
+    <Compile Include="Repositories\VoucherRepository.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
