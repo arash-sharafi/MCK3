@@ -142,5 +142,11 @@ namespace Mock3.Areas.Mgt.Controllers
             return RedirectToAction("Index");
         }
 
+        //[HttpGet]
+        //public ActionResult UrgentScoresPage(bool all = false)
+        //{
+        //    var urgentScoreRequests=_context.UrgentScores.Where(x=>x.)
+        //}
+
     }
 }

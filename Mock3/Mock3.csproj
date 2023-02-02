@@ -269,6 +269,7 @@
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\ResetPasswordViewModel.cs" />
     <Compile Include="ViewModels\SendCodeViewModel.cs" />
+    <Compile Include="Enums\UrgentScoreStatus.cs" />
     <Compile Include="ViewModels\UserExamDetailsViewModel.cs" />
     <Compile Include="ViewModels\UserVoucherDetailsViewModel.cs" />
     <Compile Include="ViewModels\VerifyCodeViewModel.cs" />

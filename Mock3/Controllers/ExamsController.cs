@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Web.Mvc;
+using Mock3.Enums;
 
 namespace Mock3.Controllers
 {
@@ -126,6 +128,7 @@ namespace Mock3.Controllers
             foreach (var regExam in userRegisteredExams)
             {
                 var urgentScoreStatus = GetUrgentScoreStatus(regExam);
+
 
                 userExamsDetailsViewModel.Add(new UserExamDetailsViewModel()
                 {
@@ -273,14 +276,15 @@ namespace Mock3.Controllers
                 switch (status)
                 {
                     case UrgentScoreStatus.Submitted:
-                        details = "درخواست نمره دهی اضطراری ثبت شده است";
+                        details = today < examDate
+                            ? "درخواست نمره دهی اضطراری ثبت شده است"
+                            : "درخواست نمره دهی اضطراری در حال پیگیری می باشد";
                         break;
-                    case UrgentScoreStatus.Processing:
-                        details = "درخواست نمره دهی اضطراری ثبت شده است";
+                    case UrgentScoreStatus.Done:
+                        details = "درخواست نمره دهی اضطراری انجام شده است";
                         break;
                     case UrgentScoreStatus.Unavailable:
                     case UrgentScoreStatus.AvailableForSubmit:
-                    case UrgentScoreStatus.Done:
                     default:
                         details = "";
                         break;

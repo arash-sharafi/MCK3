@@ -1,4 +1,6 @@
-﻿namespace Mock3.ViewModels
+﻿using Mock3.Enums;
+
+namespace Mock3.ViewModels
 {
     public class UserExamDetailsViewModel
     {
@@ -15,14 +17,5 @@
         public string ScoredDate { get; set; }
         public UrgentScoreStatus UrgentScoreStatus { get; set; }
         public string UrgentScoreDetails { get; set; }
-    }
-
-    public enum UrgentScoreStatus
-    {
-        Unavailable=1,
-        AvailableForSubmit = 2,
-        Submitted = 3,
-        Processing = 4,
-        Done = 5
     }
 }
