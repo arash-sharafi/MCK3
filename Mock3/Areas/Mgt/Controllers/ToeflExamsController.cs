@@ -1,5 +1,8 @@
 ﻿using Mock3.Areas.Mgt.ViewModels;
+using Mock3.Enums;
 using Mock3.Models;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -142,11 +145,57 @@ namespace Mock3.Areas.Mgt.Controllers
             return RedirectToAction("Index");
         }
 
-        //[HttpGet]
-        //public ActionResult UrgentScoresPage(bool all = false)
-        //{
-        //    var urgentScoreRequests=_context.UrgentScores.Where(x=>x.)
-        //}
+        [HttpGet]
+        public ActionResult UrgentScores(bool all = false)
+        {
+            var urgentScoreRequests = _context
+                .UrgentScores
+                .Where(x => x.Status == (int)UrgentScoreStatus.Submitted)
+                .OrderBy(x => x.SubmitDate)
+                .ToList();
 
+            if (all)
+            {
+                urgentScoreRequests.AddRange(
+                     _context
+                    .UrgentScores
+                    .Where(x => x.Status != (int)UrgentScoreStatus.Submitted)
+                    .OrderBy(x => x.SubmitDate)
+                    .ToList());
+            }
+
+            var urgentScoreList = new List<UrgentScoreMgtViewModel>();
+
+            foreach (var urgentScore in urgentScoreRequests)
+            {
+                var registeredExamRecord = _context.UserExams
+                    .Include(x => x.User)
+                    .Include(x => x.Voucher)
+                    .Include(x => x.Exam)
+                    .FirstOrDefault(x => x.Id == urgentScore.UserExamId);
+
+                if (registeredExamRecord == null)
+                {
+                    continue;
+                }
+
+                urgentScoreList.Add(new UrgentScoreMgtViewModel()
+                {
+                    ExamId = registeredExamRecord.ExamId,
+                    CellPhoneNo = registeredExamRecord.User.CellPhoneNumber,
+                    ExamDesc = registeredExamRecord.Exam.Description,
+                    FullName = registeredExamRecord.User.FirstName + " " + registeredExamRecord.User.LastName,
+                    NationalCode = registeredExamRecord.User.NationalCode,
+                    StartDate = registeredExamRecord.Exam.StartDate,
+                    UserId = registeredExamRecord.UserId,
+                    VoucherNo = registeredExamRecord.Voucher.VoucherNo,
+                    UrgentScoreSubmitDate = urgentScore.SubmitDate,
+                    UserExamId = registeredExamRecord.Id,
+                    UrgentScoreStatus = (UrgentScoreStatus)urgentScore.Status
+                });
+            }
+
+            return View(urgentScoreList);
+        }
     }
 }

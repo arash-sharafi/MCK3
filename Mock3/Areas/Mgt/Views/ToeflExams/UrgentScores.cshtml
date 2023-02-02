@@ -1,0 +1,51 @@
+﻿@using Mock3.Enums
+@model IEnumerable<Mock3.Areas.Mgt.ViewModels.UrgentScoreMgtViewModel>
+@{
+    ViewBag.Title = "UrgentScores";
+}
+
+<div class="container">
+    <h2>مدیریت درخواستهای نمره دهی اضطراری</h2>
+    <br />
+    @Html.ActionLink("تمام درخواستها", "UrgentScores", new { all = true }, new { @class = "btn btn-primary" })
+    <hr />
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>نام و نام خانوادگی</td>
+                    <td>شماره ووچر</td>
+                    <td>شماره همراه</td>
+                    <td>جزئیات آزمون</td>
+                    <td>تاریخ آزمون</td>
+                    <td>تاریخ ثبت درخواست</td>
+                    <td>وضعیت</td>
+                    <td></td>
+                </tr>
+            </thead>
+            @foreach (var urgentScore in Model)
+            {
+                <tr>
+                    <td class="table-cell">@urgentScore.FullName</td>
+                    <td class="table-cell">@urgentScore.VoucherNo</td>
+                    <td class="table-cell">@urgentScore.CellPhoneNo</td>
+                    <td class="table-cell">@urgentScore.ExamDesc</td>
+                    <td class="table-cell">@urgentScore.StartDate</td>
+                    <td class="table-cell">@urgentScore.UrgentScoreSubmitDate</td>
+                    <td>
+                        @if (urgentScore.UrgentScoreStatus == UrgentScoreStatus.Submitted)
+                        {
+                            @Html.ActionLink("ثبت نمرات", "SubmitScores", "ToeflParticipants", new { id = urgentScore.UserExamId }, new { @class = "btn btn-primary" })
+                        }
+                        else
+                        {
+                            <strong>درخواست پاسخ داده شده است.</strong>
+                        }
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using Mock3.Enums;
 using Mock3.Models;
 using Mock3.ViewModels;
 using System;
@@ -6,9 +7,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Web.Mvc;
-using Mock3.Enums;
 
 namespace Mock3.Controllers
 {

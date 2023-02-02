@@ -177,6 +177,7 @@
     <Compile Include="Areas\Mgt\ViewModels\ParticipantMgtViewModel.cs" />
     <Compile Include="Areas\Mgt\ViewModels\SetExamTitleForParticipantViewModel.cs" />
     <Compile Include="Areas\Mgt\ViewModels\SubmitScoresForParticipantViewModel.cs" />
+    <Compile Include="Areas\Mgt\ViewModels\UrgentScoreMgtViewModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ExamsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -312,6 +313,7 @@
     <Content Include="Areas\Mgt\Views\ToeflParticipants\Index.cshtml" />
     <Content Include="Areas\Mgt\Views\ToeflParticipants\SetExamTitle.cshtml" />
     <Content Include="Areas\Mgt\Views\ToeflParticipants\SubmitScores.cshtml" />
+    <Content Include="Areas\Mgt\Views\ToeflExams\UrgentScores.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="images\telephone.svg" />
     <Content Include="Scripts\bootstrap.js" />

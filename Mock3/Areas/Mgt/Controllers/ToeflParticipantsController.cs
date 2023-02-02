@@ -1,7 +1,10 @@
-﻿using Mock3.Areas.Mgt.ViewModels;
+﻿using System;
+using Mock3.Areas.Mgt.ViewModels;
+using Mock3.Enums;
 using Mock3.Models;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -197,16 +200,54 @@ namespace Mock3.Areas.Mgt.Controllers
 
             if (modifiedParticipantRecord == null) return RedirectToAction("Index", new { id = viewModel.ExamId });
 
+            var requestedUrgentScore = _context.UrgentScores
+                .FirstOrDefault(x => x.UserExamId == modifiedParticipantRecord.Id);
+
+            if (requestedUrgentScore != null)
+            {
+                requestedUrgentScore.Status = (int)UrgentScoreStatus.Done;
+            }
 
             modifiedParticipantRecord.ReadingScore = viewModel.ReadingScore;
             modifiedParticipantRecord.ListeningScore = viewModel.ListeningScore;
             modifiedParticipantRecord.SpeakingScore = viewModel.SpeakingScore;
             modifiedParticipantRecord.WritingScore = viewModel.WritingScore;
+            modifiedParticipantRecord.ScoreSubmitDate = Today().StringValue;
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", new { id = viewModel.ExamId });
         }
+
+        private (string StringValue, int IntigerValue) Today()
+        {
+            var persian = new PersianCalendar();
+
+            var year = persian.GetYear(DateTime.Now).ToString();
+            string month;
+            string day;
+
+            if (persian.GetMonth(DateTime.Now) < 10)
+            {
+                month = "0" + persian.GetMonth(DateTime.Now).ToString();
+            }
+            else
+            {
+                month = persian.GetMonth(DateTime.Now).ToString();
+            }
+
+            if (persian.GetDayOfMonth(DateTime.Now) < 10)
+            {
+                day = "0" + persian.GetDayOfMonth(DateTime.Now).ToString();
+            }
+            else
+            {
+                day = persian.GetDayOfMonth(DateTime.Now).ToString();
+            }
+
+            return (year + "/" + month + "/" + day, Int32.Parse(year + month + day));
+        }
+
 
     }
 }
