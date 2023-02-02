@@ -1,44 +1,31 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Enums;
 using Mock3.Models;
+using Mock3.Persistence;
 using Mock3.Repositories;
 using Mock3.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
-using Mock3.Persistence;
 
 namespace Mock3.Controllers
 {
     [Authorize]
     public class ExamsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ExamRepository _examRepository;
-        private readonly UserExamRepository _userExamRepository;
-        private readonly VoucherRepository _voucherRepository;
-        private readonly InvoiceRepository _invoiceRepository;
-        private readonly UrgentScoreRepository _urgentScoreRepository;
         private readonly UnitOfWork _unitOfWork;
 
         public ExamsController()
         {
-            _context = new ApplicationDbContext();
-
-            _examRepository = new ExamRepository(_context);
-            _voucherRepository = new VoucherRepository(_context);
-            _userExamRepository = new UserExamRepository(_context);
-            _invoiceRepository = new InvoiceRepository(_context);
-            _urgentScoreRepository = new UrgentScoreRepository(_context);
-            _unitOfWork = new UnitOfWork(_context);
+            var context = new ApplicationDbContext();
+            _unitOfWork = new UnitOfWork(context);
         }
         // GET: Exams
         public ActionResult Index()
         {
-            var exams = _examRepository
+            var exams = _unitOfWork.Exams
                 .GetExams()
                 .OrderByDescending(x => x.StartDate);
 
@@ -70,14 +57,14 @@ namespace Mock3.Controllers
 
 
 
-            var usedVoucher = _voucherRepository.GetVoucherByVoucherNumber(model.VoucherNo);
+            var usedVoucher = _unitOfWork.Vouchers.GetVoucherByVoucherNumber(model.VoucherNo);
 
             if (usedVoucher == null)
                 throw new NullReferenceException();
 
 
 
-            var voucherIsUsedBefore = _voucherRepository.GetVoucherById(usedVoucher.Id);
+            var voucherIsUsedBefore = _unitOfWork.Vouchers.GetVoucherById(usedVoucher.Id);
 
             if (voucherIsUsedBefore != null)
                 throw new InvalidOperationException();
@@ -85,7 +72,7 @@ namespace Mock3.Controllers
 
 
 
-            var userRegisteredBefore = _userExamRepository
+            var userRegisteredBefore = _unitOfWork.UserExams
                 .GetUserExamByForeignKeys(currentUserId, examId, usedVoucher.Id);
 
             if (userRegisteredBefore != null)
@@ -94,9 +81,9 @@ namespace Mock3.Controllers
 
 
             var examParticipantsCounter = 0;
-            if (_userExamRepository.Any())
+            if (_unitOfWork.UserExams.Any())
             {
-                examParticipantsCounter = _userExamRepository
+                examParticipantsCounter = _unitOfWork.UserExams
                     .GetUserExams(examId)
                     .Count();
             }
@@ -109,9 +96,9 @@ namespace Mock3.Controllers
                 ChairNo = (byte)++examParticipantsCounter
             };
 
-            _userExamRepository.Add(newUserExam);
+            _unitOfWork.UserExams.Add(newUserExam);
 
-            var registeredExam = _examRepository.GetExamById(examId);
+            var registeredExam = _unitOfWork.Exams.GetExamById(examId);
             if (registeredExam != null)
                 registeredExam.RemainingCapacity -= 1;
 
@@ -126,7 +113,7 @@ namespace Mock3.Controllers
             var currentUserId = User.Identity.GetUserId();
 
 
-            var userRegisteredExams = _userExamRepository
+            var userRegisteredExams = _unitOfWork.UserExams
                 .GetUserExamWithDependenciesByUserId(currentUserId);
 
             var userExamsDetailsViewModel = new List<UserExamDetailsViewModel>();
@@ -147,7 +134,7 @@ namespace Mock3.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult UrgentScore(int examId)
         {
-            var exam = _examRepository.GetExamById(examId);
+            var exam = _unitOfWork.Exams.GetExamById(examId);
             if (exam == null)
             {
                 throw new NullReferenceException();
@@ -155,7 +142,7 @@ namespace Mock3.Controllers
 
             string currentUserId = User.Identity.GetUserId();
 
-            var userExam = _userExamRepository.GetUserExamByForeignKeys(currentUserId, examId);
+            var userExam = _unitOfWork.UserExams.GetUserExamByForeignKeys(currentUserId, examId);
             if (userExam == null)
             {
                 throw new NullReferenceException();
@@ -232,7 +219,7 @@ namespace Mock3.Controllers
         private bool SubmitUrgentScore(UserExam registeredExam)
         {
 
-            var exam = _examRepository.GetExamById(registeredExam.ExamId);
+            var exam = _unitOfWork.Exams.GetExamById(registeredExam.ExamId);
             if (exam == null)
             {
                 return false;
@@ -248,7 +235,7 @@ namespace Mock3.Controllers
                     UserId = User.Identity.GetUserId()
                 };
 
-                _invoiceRepository.Add(invoice);
+                _unitOfWork.Invoices.Add(invoice);
                 _unitOfWork.Complete();
 
                 UrgentScore newUSRequest = new UrgentScore()
@@ -261,7 +248,7 @@ namespace Mock3.Controllers
                     UserId = User.Identity.GetUserId()
                 };
 
-                _urgentScoreRepository.Add(newUSRequest);
+                _unitOfWork.UrgentScores.Add(newUSRequest);
                 _unitOfWork.Complete();
 
                 return true;
@@ -278,7 +265,7 @@ namespace Mock3.Controllers
             int today = Today().IntigerValue;
             int examDate = Convert.ToInt32(registeredExam.Exam.StartDate.Replace("/", ""));
 
-            var submittedUrgentScoreRequest = _urgentScoreRepository
+            var submittedUrgentScoreRequest = _unitOfWork.UrgentScores
                 .GetUrgentScoreByUserExamId(registeredExam.Id);
 
             if (submittedUrgentScoreRequest == null)
@@ -373,7 +360,7 @@ namespace Mock3.Controllers
         {
             var currentUserId = User.Identity.GetUserId();
 
-            var userExamRecord = _userExamRepository
+            var userExamRecord = _unitOfWork.UserExams
                 .GetUserExamByForeignKeys(currentUserId, exam.Id);
 
             if (userExamRecord != null)
