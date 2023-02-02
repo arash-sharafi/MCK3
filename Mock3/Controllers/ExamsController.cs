@@ -9,6 +9,7 @@ using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
+using Mock3.Persistence;
 
 namespace Mock3.Controllers
 {
@@ -19,6 +20,9 @@ namespace Mock3.Controllers
         private readonly ExamRepository _examRepository;
         private readonly UserExamRepository _userExamRepository;
         private readonly VoucherRepository _voucherRepository;
+        private readonly InvoiceRepository _invoiceRepository;
+        private readonly UrgentScoreRepository _urgentScoreRepository;
+        private readonly UnitOfWork _unitOfWork;
 
         public ExamsController()
         {
@@ -27,6 +31,9 @@ namespace Mock3.Controllers
             _examRepository = new ExamRepository(_context);
             _voucherRepository = new VoucherRepository(_context);
             _userExamRepository = new UserExamRepository(_context);
+            _invoiceRepository = new InvoiceRepository(_context);
+            _urgentScoreRepository = new UrgentScoreRepository(_context);
+            _unitOfWork = new UnitOfWork(_context);
         }
         // GET: Exams
         public ActionResult Index()
@@ -108,20 +115,19 @@ namespace Mock3.Controllers
             if (registeredExam != null)
                 registeredExam.RemainingCapacity -= 1;
 
-            _context.SaveChanges();
+            _unitOfWork.Complete(); ;
 
             return RedirectToAction("Index", "Home");
         }
+
 
         public ActionResult ExamsDetails()
         {
             var currentUserId = User.Identity.GetUserId();
 
 
-            var userRegisteredExams = _context.UserExams
-                .Where(x => x.UserId.Equals(currentUserId))
-                .Include(x => x.Exam)
-                .Include(x => x.Voucher).ToList();
+            var userRegisteredExams = _userExamRepository
+                .GetUserExamWithDependenciesByUserId(currentUserId);
 
             var userExamsDetailsViewModel = new List<UserExamDetailsViewModel>();
 
@@ -130,45 +136,29 @@ namespace Mock3.Controllers
                 var urgentScoreStatus = GetUrgentScoreStatus(regExam);
 
 
-                userExamsDetailsViewModel.Add(new UserExamDetailsViewModel()
-                {
-                    ExamDate = regExam.Exam.StartDate,
-                    ExamDesc = regExam.Exam.Description,
-                    ExamName = regExam.Exam.Name,
-                    ExamId = regExam.ExamId,
-                    ListeningScore = regExam.ListeningScore,
-                    ReadingScore = regExam.ReadingScore,
-                    SpeakingScore = regExam.SpeakingScore,
-                    WritingScore = regExam.WritingScore,
-                    ScoredDate = regExam.ScoreSubmitDate,
-                    TotalScore = TotalScore(participatedExam: regExam),
-                    VoucherNo = regExam.Voucher.VoucherNo,
-                    UrgentScoreStatus = urgentScoreStatus.Status,
-                    UrgentScoreDetails = urgentScoreStatus.StatusDetails
-                });
+                userExamsDetailsViewModel.Add(GetExamDetailsViewModel(regExam, urgentScoreStatus));
             }
 
             return View(userExamsDetailsViewModel);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UrgentScore(int examId)
         {
-            var exam = _context.Exams.FirstOrDefault(x => x.Id == examId);
+            var exam = _examRepository.GetExamById(examId);
             if (exam == null)
             {
-                return RedirectToAction("ExamsDetails");
+                throw new NullReferenceException();
             }
 
             string currentUserId = User.Identity.GetUserId();
-            ApplicationUser currentUser = _context.Users.FirstOrDefault(x => x.Id == currentUserId);
 
-
-            var userExam = _context.UserExams.FirstOrDefault(x => x.ExamId == examId && x.UserId == currentUserId);
+            var userExam = _userExamRepository.GetUserExamByForeignKeys(currentUserId, examId);
             if (userExam == null)
             {
-                return RedirectToAction("ExamsDetails");
+                throw new NullReferenceException();
             }
 
             int examDate = Int32.Parse(exam.StartDate.Replace("/", ""));
@@ -176,7 +166,7 @@ namespace Mock3.Controllers
 
             if (examDate <= today)
             {
-                return RedirectToAction("ExamsDetails");
+                throw new InvalidOperationException();
             }
 
             //Actual payments goes here
@@ -216,55 +206,71 @@ namespace Mock3.Controllers
             };
         }
 
+        private UserExamDetailsViewModel GetExamDetailsViewModel(
+            UserExam regExam, (UrgentScoreStatus Status, string StatusDetails) urgentScoreStatus)
+        {
+            return new UserExamDetailsViewModel()
+            {
+                ExamDate = regExam.Exam.StartDate,
+                ExamDesc = regExam.Exam.Description,
+                ExamName = regExam.Exam.Name,
+                ExamId = regExam.ExamId,
+                ListeningScore = regExam.ListeningScore,
+                ReadingScore = regExam.ReadingScore,
+                SpeakingScore = regExam.SpeakingScore,
+                WritingScore = regExam.WritingScore,
+                ScoredDate = regExam.ScoreSubmitDate,
+                TotalScore = TotalScore(participatedExam: regExam),
+                VoucherNo = regExam.Voucher.VoucherNo,
+                UrgentScoreStatus = urgentScoreStatus.Status,
+                UrgentScoreDetails = urgentScoreStatus.StatusDetails
+            };
+        }
+
+
 
         private bool SubmitUrgentScore(UserExam registeredExam)
         {
 
-            var exam = _context.Exams.FirstOrDefault(x => x.Id == registeredExam.ExamId);
+            var exam = _examRepository.GetExamById(registeredExam.ExamId);
             if (exam == null)
             {
                 return false;
             }
 
-
-            using (var transaction = _context.Database.BeginTransaction())
+            try
             {
-                try
+                var invoice = new Invoice()
                 {
-                    var invoice = new Invoice()
-                    {
-                        Price = "40000",
-                        Description = "خرید نمره دهی اضطراری برای آزمون " + exam.Description,
-                        PurchaseTypeId = (int)PurchaseTypeEnum.BuyUrgentScore,
-                        UserId = User.Identity.GetUserId()
-                    };
+                    Price = "40000",
+                    Description = "خرید نمره دهی اضطراری برای آزمون " + exam.Description,
+                    PurchaseTypeId = (int)PurchaseTypeEnum.BuyUrgentScore,
+                    UserId = User.Identity.GetUserId()
+                };
 
-                    _context.Invoices.Add(invoice);
-                    _context.SaveChanges();
+                _invoiceRepository.Add(invoice);
+                _unitOfWork.Complete();
 
-                    UrgentScore newUSRequest = new UrgentScore()
-                    {
-                        InvoiceId = invoice.Id,
-                        UserExamId = registeredExam.Id,
-                        Status = (int)UrgentScoreStatus.Submitted,
-                        SubmitDate = Today().StringValue,
-                        VoucherId = registeredExam.VoucherId,
-                        UserId = User.Identity.GetUserId()
-                    };
-
-                    _context.UrgentScores.Add(newUSRequest);
-                    _context.SaveChanges();
-
-                    transaction.Commit();
-                    return true;
-                }
-                catch (Exception e)
+                UrgentScore newUSRequest = new UrgentScore()
                 {
-                    transaction.Rollback();
-                    return false;
-                }
+                    InvoiceId = invoice.Id,
+                    UserExamId = registeredExam.Id,
+                    Status = (int)UrgentScoreStatus.Submitted,
+                    SubmitDate = Today().StringValue,
+                    VoucherId = registeredExam.VoucherId,
+                    UserId = User.Identity.GetUserId()
+                };
 
+                _urgentScoreRepository.Add(newUSRequest);
+                _unitOfWork.Complete();
+
+                return true;
             }
+            catch (Exception e)
+            {
+                return false;
+            }
+
         }
 
         private (UrgentScoreStatus Status, string StatusDetails) GetUrgentScoreStatus(UserExam registeredExam)
@@ -272,8 +278,8 @@ namespace Mock3.Controllers
             int today = Today().IntigerValue;
             int examDate = Convert.ToInt32(registeredExam.Exam.StartDate.Replace("/", ""));
 
-            var submittedUrgentScoreRequest = _context.UrgentScores
-                .FirstOrDefault(x => x.UserExamId == registeredExam.Id);
+            var submittedUrgentScoreRequest = _urgentScoreRepository
+                .GetUrgentScoreByUserExamId(registeredExam.Id);
 
             if (submittedUrgentScoreRequest == null)
             {
@@ -367,9 +373,9 @@ namespace Mock3.Controllers
         {
             var currentUserId = User.Identity.GetUserId();
 
-            var userExamRecord = _context.UserExams
-                .FirstOrDefault(x => x.UserId == currentUserId
-                                     && x.ExamId == exam.Id);
+            var userExamRecord = _userExamRepository
+                .GetUserExamByForeignKeys(currentUserId, exam.Id);
+
             if (userExamRecord != null)
                 return true;
             else

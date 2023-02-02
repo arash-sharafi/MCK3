@@ -251,7 +251,10 @@
     <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\PurchaseType.cs" />
     <Compile Include="Models\UrgentScore.cs" />
+    <Compile Include="Persistence\UnitOfWork.cs" />
     <Compile Include="Repositories\ExamRepository.cs" />
+    <Compile Include="Repositories\InvoiceRepository.cs" />
+    <Compile Include="Repositories\UrgentScoreRepository.cs" />
     <Compile Include="Repositories\UserExamRepository.cs" />
     <Compile Include="Repositories\VoucherRepository.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
