@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNet.Identity;
-using Mock3.Models;
-using Mock3.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -8,6 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using Mock3.Core.Models;
+using Mock3.Core.ViewModels;
+using Mock3.Persistence;
 
 namespace Mock3.Controllers
 {

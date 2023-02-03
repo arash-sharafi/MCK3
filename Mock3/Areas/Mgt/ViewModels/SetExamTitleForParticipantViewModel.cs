@@ -1,6 +1,6 @@
-﻿using Mock3.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Mock3.Core.Models;
 
 namespace Mock3.Areas.Mgt.ViewModels
 {

@@ -8,8 +8,8 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using Mock3.Models;
-using Mock3.ViewModels;
+using Mock3.Core.Models;
+using Mock3.Core.ViewModels;
 
 namespace Mock3.Controllers
 {

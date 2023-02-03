@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Enums;
-using Mock3.Models;
 using Mock3.Persistence;
-using Mock3.Repositories;
-using Mock3.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
+using Mock3.Core;
+using Mock3.Core.Models;
+using Mock3.Core.ViewModels;
 
 namespace Mock3.Controllers
 {

@@ -1,5 +1,7 @@
-﻿using Mock3.Models;
-using Mock3.Repositories;
+﻿using Mock3.Core;
+using Mock3.Core.Models;
+using Mock3.Core.Repositories;
+using Mock3.Persistence.Repositories;
 
 namespace Mock3.Persistence
 {

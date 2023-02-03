@@ -10,7 +10,8 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using Mock3.Models;
+using Mock3.Core.Models;
+using Mock3.Persistence;
 
 namespace Mock3
 {
