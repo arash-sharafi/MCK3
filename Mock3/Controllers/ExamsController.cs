@@ -15,12 +15,11 @@ namespace Mock3.Controllers
     [Authorize]
     public class ExamsController : Controller
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ExamsController()
+        public ExamsController(IUnitOfWork unitOfWork)
         {
-            var context = new ApplicationDbContext();
-            _unitOfWork = new UnitOfWork(context);
+            _unitOfWork = unitOfWork;
         }
         // GET: Exams
         public ActionResult Index()

@@ -6,8 +6,7 @@ using Mock3.Models;
 
 namespace Mock3.Repositories
 {
-
-    public class VoucherRepository
+    public class VoucherRepository : IVoucherRepository
     {
         private readonly ApplicationDbContext _context;
 

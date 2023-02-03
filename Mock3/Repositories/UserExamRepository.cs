@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Mock3.Repositories
 {
-    public class UserExamRepository
+    public class UserExamRepository : IUserExamRepository
     {
         private readonly ApplicationDbContext _context;
 

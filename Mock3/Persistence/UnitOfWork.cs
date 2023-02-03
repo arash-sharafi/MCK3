@@ -3,15 +3,15 @@ using Mock3.Repositories;
 
 namespace Mock3.Persistence
 {
-    public class UnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
 
-        public ExamRepository Exams { get; private set; }
-        public UserExamRepository UserExams { get; private set; }
-        public VoucherRepository Vouchers { get; private set; }
-        public InvoiceRepository Invoices { get; private set; }
-        public UrgentScoreRepository UrgentScores { get; private set; }
+        public IExamRepository Exams { get; private set; }
+        public IUserExamRepository UserExams { get; private set; }
+        public IVoucherRepository Vouchers { get; private set; }
+        public IInvoiceRepository Invoices { get; private set; }
+        public IUrgentScoreRepository UrgentScores { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {

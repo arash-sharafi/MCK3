@@ -2,7 +2,7 @@
 
 namespace Mock3.Repositories
 {
-    public class InvoiceRepository
+    public class InvoiceRepository : IInvoiceRepository
     {
         private readonly ApplicationDbContext _context;
 

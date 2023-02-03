@@ -3,7 +3,7 @@ using Mock3.Models;
 
 namespace Mock3.Repositories
 {
-    public class UrgentScoreRepository
+    public class UrgentScoreRepository : IUrgentScoreRepository
     {
         private readonly ApplicationDbContext _context;
 
