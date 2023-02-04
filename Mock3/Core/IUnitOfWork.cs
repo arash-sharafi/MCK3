@@ -9,6 +9,7 @@ namespace Mock3.Core
         IVoucherRepository Vouchers { get; }
         IInvoiceRepository Invoices { get; }
         IUrgentScoreRepository UrgentScores { get; }
+        IExamTitleRepository ExamTitles { get; }
         void Complete();
     }
 }

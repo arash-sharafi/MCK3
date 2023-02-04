@@ -14,6 +14,7 @@ namespace Mock3.Persistence
         public IVoucherRepository Vouchers { get; private set; }
         public IInvoiceRepository Invoices { get; private set; }
         public IUrgentScoreRepository UrgentScores { get; private set; }
+        public IExamTitleRepository ExamTitles { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -23,7 +24,7 @@ namespace Mock3.Persistence
             Vouchers = new VoucherRepository(context);
             Invoices = new InvoiceRepository(context);
             UrgentScores = new UrgentScoreRepository(context);
-
+            ExamTitles = new ExamTitleRepository(context);
         }
 
         public void Complete()

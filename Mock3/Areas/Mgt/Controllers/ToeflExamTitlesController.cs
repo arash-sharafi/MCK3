@@ -1,6 +1,8 @@
-﻿using Mock3.Areas.Mgt.ViewModels;
+﻿using System;
+using Mock3.Areas.Mgt.ViewModels;
 using System.Linq;
 using System.Web.Mvc;
+using Mock3.Core;
 using Mock3.Core.Models;
 using Mock3.Persistence;
 
@@ -9,16 +11,16 @@ namespace Mock3.Areas.Mgt.Controllers
     [Authorize(Roles = "Admin")]
     public class ToeflExamTitlesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ToeflExamTitlesController()
+        public ToeflExamTitlesController(IUnitOfWork unitOfWork)
         {
-            _context = new ApplicationDbContext();
+            _unitOfWork = unitOfWork;
         }
         // GET: Mgt/ToeflExamTitles
         public ActionResult Index()
         {
-            var examTitles = _context.ExamTitles.ToList();
+            var examTitles = _unitOfWork.ExamTitles.GetExamTitles();
             return View(examTitles);
         }
 
@@ -31,23 +33,25 @@ namespace Mock3.Areas.Mgt.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(ExamTitleMgtViewModel model)
         {
-            if (!ModelState.IsValid) return RedirectToAction("Index");
+            if (!ModelState.IsValid)
+                return View(model);
 
-            _context.ExamTitles.Add(new ExamTitle
+            _unitOfWork.ExamTitles.Add(new ExamTitle
             {
                 Title = model.Title
             });
 
-            _context.SaveChanges();
+            _unitOfWork.Complete();
 
             return RedirectToAction("Index");
         }
 
         public ActionResult Edit(int id)
         {
-            var examTitle = _context.ExamTitles.Find(id);
+            var examTitle = _unitOfWork.ExamTitles.GetExamTitleById(examTitleId: id);
 
-            if (examTitle == null) return RedirectToAction("Index");
+            if (examTitle == null)
+                throw new NullReferenceException();
 
 
             var model = new ExamTitleMgtViewModel
@@ -66,13 +70,14 @@ namespace Mock3.Areas.Mgt.Controllers
                 return View(model);
 
 
-            var examTitle = _context.ExamTitles.Find(model.Id);
+            var examTitle = _unitOfWork.ExamTitles.GetExamTitleById(examTitleId: model.Id);
 
-            if (examTitle == null) return RedirectToAction("Index");
+            if (examTitle == null)
+                throw new NullReferenceException();
 
             examTitle.Title = model.Title;
 
-            _context.SaveChanges();
+            _unitOfWork.Complete();
 
             return RedirectToAction("Index");
         }
