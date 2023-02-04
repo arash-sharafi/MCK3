@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNet.Identity;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
 using Mock3.Core;
 using Mock3.Core.Models;
 using Mock3.Core.ViewModels;
-using Mock3.Persistence;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 using static System.Int32;
 
 namespace Mock3.Controllers
@@ -47,14 +46,14 @@ namespace Mock3.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public ActionResult VouchersDetails()
+        public async Task<ActionResult> VouchersDetails()
         {
             var currentUserId = User.Identity.GetUserId();
 
             var userVouchersViewModel = new List<UserVoucherDetailsViewModel>();
 
-            var participatedExams = _unitOfWork.UserExams
-                .GetUserExamWithDependenciesByUserId(currentUserId);
+            var participatedExams = await _unitOfWork.UserExams
+                .GetUserExamsByUserId(currentUserId, withDependencies: true);
 
             foreach (var participatedExam in participatedExams)
             {

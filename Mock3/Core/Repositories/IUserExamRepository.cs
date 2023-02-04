@@ -1,5 +1,6 @@
 ﻿using Mock3.Core.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Mock3.Core.Repositories
 {
@@ -10,9 +11,9 @@ namespace Mock3.Core.Repositories
         UserExam GetUserExamByForeignKeys(int voucherId, string userId);
         UserExam GetUserExamByVoucherId(int voucherId);
         bool Any();
-        IEnumerable<UserExam> GetUserExams(int examId);
-        IEnumerable<UserExam> GetUserExamWithDependenciesByUserId(string userId);
-        UserExam GetUserExamById(int userExamId, bool withDependencies);
+        Task<IEnumerable<UserExam>> GetUserExamsByExamId(int examId, bool withDependencies);
+        Task<IEnumerable<UserExam>> GetUserExamsByUserId(string userId, bool withDependencies);
+        Task<UserExam> GetUserExamById(int userExamId, bool withDependencies);
         void Add(UserExam userExam);
         void Remove(UserExam userExam);
     }

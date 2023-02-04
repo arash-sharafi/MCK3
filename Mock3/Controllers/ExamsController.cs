@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace Mock3.Controllers
@@ -45,7 +46,7 @@ namespace Mock3.Controllers
         }
 
         [HttpPost]
-        public ActionResult Register(int id, RegisterExamViewModel model)
+        public async Task<ActionResult> Register(int id, RegisterExamViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -82,8 +83,8 @@ namespace Mock3.Controllers
             var examParticipantsCounter = 0;
             if (_unitOfWork.UserExams.Any())
             {
-                examParticipantsCounter = _unitOfWork.UserExams
-                    .GetUserExams(examId)
+                examParticipantsCounter = (await _unitOfWork.UserExams
+                    .GetUserExamsByExamId(examId, withDependencies: false))
                     .Count();
             }
 
@@ -101,19 +102,19 @@ namespace Mock3.Controllers
             if (registeredExam != null)
                 registeredExam.RemainingCapacity -= 1;
 
-            _unitOfWork.Complete(); 
+            _unitOfWork.Complete();
 
             return RedirectToAction("Index", "Home");
         }
 
 
-        public ActionResult ExamsDetails()
+        public async Task<ActionResult> ExamsDetails()
         {
             var currentUserId = User.Identity.GetUserId();
 
 
-            var userRegisteredExams = _unitOfWork.UserExams
-                .GetUserExamWithDependenciesByUserId(currentUserId);
+            var userRegisteredExams = await _unitOfWork.UserExams
+                .GetUserExamsByUserId(currentUserId, withDependencies: false);
 
             var userExamsDetailsViewModel = new List<UserExamDetailsViewModel>();
 
@@ -252,7 +253,7 @@ namespace Mock3.Controllers
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

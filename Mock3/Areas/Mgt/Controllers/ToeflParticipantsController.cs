@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Mock3.Core;
 using Mock3.Core.Models;
 using Mock3.Persistence;
 
@@ -15,48 +16,30 @@ namespace Mock3.Areas.Mgt.Controllers
     [Authorize(Roles = "Admin")]
     public class ToeflParticipantsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ToeflParticipantsController()
+        public ToeflParticipantsController(IUnitOfWork unitOfWork)
         {
-            _context = new ApplicationDbContext();
+            _unitOfWork = unitOfWork;
         }
 
 
         // GET: Mgt/ToeflParticipants
-        public async Task<ActionResult> Index(int? id)
+        public async Task<ActionResult> Index(int id)
         {
-            var selectedExam = await _context.Exams.FindAsync(id);
+            var selectedExam = _unitOfWork.Exams.GetExamById(id);
 
-            if (selectedExam == null) return RedirectToAction("Index", "ToeflExams");
+            if (selectedExam == null)
+                throw new NullReferenceException();
 
-            var participants = await _context.UserExams
-                .Where(x => x.ExamId == id)
-                .Include(x => x.Exam)
-                .Include(x => x.Voucher)
-                .Include(x => x.User)
-                .Include(x => x.ExamTitle)
-                .ToListAsync();
+            var participants = await _unitOfWork.UserExams
+                .GetUserExamsByExamId(examId: id, withDependencies: true);
 
             var viewModel = new List<ParticipantMgtViewModel>();
 
             foreach (var participant in participants)
             {
-                viewModel.Add(new ParticipantMgtViewModel
-                {
-                    UserExamId = participant.Id,
-                    ExamDesc = participant.Exam.Description,
-                    ExamId = participant.ExamId,
-                    VoucherNo = participant.Voucher.VoucherNo,
-                    ExamTitle = participant.ExamTitle != null
-                        ? participant.ExamTitle.Title : "N/A",
-                    FirstName = participant.User.FirstName,
-                    LastName = participant.User.LastName,
-                    ReadingScore = participant.ReadingScore,
-                    ListeningScore = participant.ListeningScore,
-                    SpeakingScore = participant.SpeakingScore,
-                    WritingScore = participant.WritingScore
-                });
+                viewModel.Add(GetParticipantMgtViewModel(participant));
             }
 
 
@@ -65,33 +48,12 @@ namespace Mock3.Areas.Mgt.Controllers
 
         }
 
+
         public async Task<ActionResult> SetExamTitle(int id)
         {
-            var participantExamRecord = await _context.UserExams
-                .Include(x => x.User)
-                .Include(x => x.Exam)
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-
-            if (participantExamRecord == null) return RedirectToAction("Index");
-
-            var examTitles = await _context.ExamTitles.ToListAsync();
-
-            var viewModel = new SetExamTitleForParticipantViewModel
-            {
-                UserExamId = participantExamRecord.Id,
-                ExamId = participantExamRecord.ExamId,
-                Email = participantExamRecord.User.Email,
-                ExamDesc = participantExamRecord.Exam.Description,
-                FullName = participantExamRecord.User.FirstName + " " +
-                           participantExamRecord.User.LastName,
-                NationalCode = participantExamRecord.User.NationalCode,
-                ExamTitleId = participantExamRecord.ExamTitleId ?? 0,
-                ExamTitles = examTitles
-            };
-
-            return View(viewModel);
+            return View(await GetExamTitleForParticipantViewModel(id));
         }
+
 
 
         [HttpPost]
@@ -100,38 +62,18 @@ namespace Mock3.Areas.Mgt.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var participantRecord = await _context.UserExams
-                    .Include(x => x.User)
-                    .Include(x => x.Exam)
-                    .FirstOrDefaultAsync(x => x.Id == viewModel.UserExamId);
-
-
-                if (participantRecord == null) return RedirectToAction("Index");
-
-                var examTitles = await _context.ExamTitles.ToListAsync();
-
-                var newViewModel = new SetExamTitleForParticipantViewModel
-                {
-                    UserExamId = participantRecord.Id,
-                    ExamId = participantRecord.ExamId,
-                    Email = participantRecord.User.Email,
-                    ExamDesc = participantRecord.Exam.Description,
-                    FullName = participantRecord.User.FirstName + " " +
-                               participantRecord.User.LastName,
-                    NationalCode = participantRecord.User.NationalCode,
-                    ExamTitleId = participantRecord.ExamTitleId ?? 0,
-                    ExamTitles = examTitles
-                };
-                return View(newViewModel);
+                return View(await GetExamTitleForParticipantViewModel(viewModel.UserExamId));
             }
 
-            var modifiedParticipantRecord = await _context.UserExams.FindAsync(viewModel.UserExamId);
+            var modifiedParticipantRecord = await _unitOfWork.UserExams
+                .GetUserExamById(viewModel.UserExamId, withDependencies: false);
 
-            if (modifiedParticipantRecord == null) return RedirectToAction("Index", new { id = viewModel.ExamId });
+            if (modifiedParticipantRecord == null)
+                throw new NullReferenceException();
 
 
             modifiedParticipantRecord.ExamTitleId = viewModel.ExamTitleId;
-            await _context.SaveChangesAsync();
+            _unitOfWork.Complete();
 
             return RedirectToAction("Index", new { id = viewModel.ExamId });
         }
@@ -139,14 +81,51 @@ namespace Mock3.Areas.Mgt.Controllers
 
         public async Task<ActionResult> SubmitScores(int id)
         {
-            var participantExamRecord = await _context.UserExams
-                .Include(x => x.User)
-                .Include(x => x.Exam)
-                .FirstOrDefaultAsync(x => x.Id == id);
+            return View(await GetSubmitScoresForParticipantViewModel(id));
+        }
 
-            if (participantExamRecord == null) return RedirectToAction("Index");
 
-            var viewModel = new SubmitScoresForParticipantViewModel
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SubmitScores(SubmitScoresForParticipantViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(await GetSubmitScoresForParticipantViewModel(viewModel.UserExamId));
+            }
+
+            var modifiedParticipantRecord = await _unitOfWork.UserExams
+                .GetUserExamById(viewModel.UserExamId, withDependencies: false);
+
+            if (modifiedParticipantRecord == null)
+                throw new NullReferenceException();
+
+            var requestedUrgentScore = _unitOfWork.UrgentScores
+                .GetUrgentScoreByUserExamId(userExamId: modifiedParticipantRecord.Id);
+
+            if (requestedUrgentScore != null)
+                requestedUrgentScore.Status = (int)UrgentScoreStatus.Done;
+
+            modifiedParticipantRecord.ReadingScore = viewModel.ReadingScore;
+            modifiedParticipantRecord.ListeningScore = viewModel.ListeningScore;
+            modifiedParticipantRecord.SpeakingScore = viewModel.SpeakingScore;
+            modifiedParticipantRecord.WritingScore = viewModel.WritingScore;
+            modifiedParticipantRecord.ScoreSubmitDate = Today().StringValue;
+
+            _unitOfWork.Complete();
+
+            return RedirectToAction("Index", new { id = viewModel.ExamId });
+        }
+
+        private async Task<SubmitScoresForParticipantViewModel> GetSubmitScoresForParticipantViewModel(int id)
+        {
+            var participantExamRecord = await _unitOfWork.UserExams
+                .GetUserExamById(userExamId: id, withDependencies: true);
+
+            if (participantExamRecord == null)
+                throw new NullReferenceException();
+
+            return new SubmitScoresForParticipantViewModel
             {
                 ExamId = participantExamRecord.ExamId,
                 ExamDesc = participantExamRecord.Exam.Description,
@@ -160,65 +139,53 @@ namespace Mock3.Areas.Mgt.Controllers
                 SpeakingScore = participantExamRecord.SpeakingScore,
                 WritingScore = participantExamRecord.WritingScore
             };
-
-            return View(viewModel);
-
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SubmitScores(SubmitScoresForParticipantViewModel viewModel)
+
+        private async Task<SetExamTitleForParticipantViewModel> GetExamTitleForParticipantViewModel(int id)
         {
-            if (!ModelState.IsValid)
+            var participantExamRecord = await _unitOfWork.UserExams
+                .GetUserExamById(userExamId: id, withDependencies: true);
+
+
+            if (participantExamRecord == null)
+                throw new NullReferenceException();
+
+            var examTitles = _unitOfWork.ExamTitles.GetExamTitles();
+
+            return new SetExamTitleForParticipantViewModel
             {
-                var participantExamRecord = await _context.UserExams
-                    .Include(x => x.User)
-                    .Include(x => x.Exam)
-                    .FirstOrDefaultAsync(x => x.Id == viewModel.UserExamId);
-
-
-                if (participantExamRecord == null) return RedirectToAction("Index");
-
-
-                var newViewModel = new SubmitScoresForParticipantViewModel
-                {
-                    ExamId = participantExamRecord.ExamId,
-                    ExamDesc = participantExamRecord.Exam.Description,
-                    Email = participantExamRecord.User.Email,
-                    FullName = participantExamRecord.User.FirstName + " " +
-                               participantExamRecord.User.LastName,
-                    NationalCode = participantExamRecord.User.NationalCode,
-                    UserExamId = participantExamRecord.Id,
-                    ReadingScore = participantExamRecord.ReadingScore,
-                    ListeningScore = participantExamRecord.ListeningScore,
-                    SpeakingScore = participantExamRecord.SpeakingScore,
-                    WritingScore = participantExamRecord.WritingScore
-                };
-                return View(newViewModel);
-            }
-
-            var modifiedParticipantRecord = await _context.UserExams.FindAsync(viewModel.UserExamId);
-
-            if (modifiedParticipantRecord == null) return RedirectToAction("Index", new { id = viewModel.ExamId });
-
-            var requestedUrgentScore = _context.UrgentScores
-                .FirstOrDefault(x => x.UserExamId == modifiedParticipantRecord.Id);
-
-            if (requestedUrgentScore != null)
-            {
-                requestedUrgentScore.Status = (int)UrgentScoreStatus.Done;
-            }
-
-            modifiedParticipantRecord.ReadingScore = viewModel.ReadingScore;
-            modifiedParticipantRecord.ListeningScore = viewModel.ListeningScore;
-            modifiedParticipantRecord.SpeakingScore = viewModel.SpeakingScore;
-            modifiedParticipantRecord.WritingScore = viewModel.WritingScore;
-            modifiedParticipantRecord.ScoreSubmitDate = Today().StringValue;
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index", new { id = viewModel.ExamId });
+                UserExamId = participantExamRecord.Id,
+                ExamId = participantExamRecord.ExamId,
+                Email = participantExamRecord.User.Email,
+                ExamDesc = participantExamRecord.Exam.Description,
+                FullName = participantExamRecord.User.FirstName + " " +
+                           participantExamRecord.User.LastName,
+                NationalCode = participantExamRecord.User.NationalCode,
+                ExamTitleId = participantExamRecord.ExamTitleId ?? 0,
+                ExamTitles = examTitles
+            };
         }
+
+        private static ParticipantMgtViewModel GetParticipantMgtViewModel(UserExam participant)
+        {
+            return new ParticipantMgtViewModel
+            {
+                UserExamId = participant.Id,
+                ExamDesc = participant.Exam.Description,
+                ExamId = participant.ExamId,
+                VoucherNo = participant.Voucher.VoucherNo,
+                ExamTitle = participant.ExamTitle != null
+                    ? participant.ExamTitle.Title : "N/A",
+                FirstName = participant.User.FirstName,
+                LastName = participant.User.LastName,
+                ReadingScore = participant.ReadingScore,
+                ListeningScore = participant.ListeningScore,
+                SpeakingScore = participant.SpeakingScore,
+                WritingScore = participant.WritingScore
+            };
+        }
+
 
         private (string StringValue, int IntigerValue) Today()
         {

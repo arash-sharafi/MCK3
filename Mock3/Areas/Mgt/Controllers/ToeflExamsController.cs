@@ -5,6 +5,7 @@ using Mock3.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace Mock3.Areas.Mgt.Controllers
@@ -151,7 +152,7 @@ namespace Mock3.Areas.Mgt.Controllers
         }
 
         [HttpGet]
-        public ActionResult UrgentScores(bool all = false)
+        public async Task<ActionResult> UrgentScores(bool all = false)
         {
             var urgentScoreRequests = _unitOfWork
                 .UrgentScores
@@ -170,7 +171,7 @@ namespace Mock3.Areas.Mgt.Controllers
 
             foreach (var urgentScore in urgentScoreRequests)
             {
-                var registeredExamRecord = _unitOfWork.UserExams
+                var registeredExamRecord = await _unitOfWork.UserExams
                     .GetUserExamById(userExamId: urgentScore.UserExamId, withDependencies: true);
 
                 if (registeredExamRecord == null)

@@ -3,6 +3,7 @@ using Mock3.Core.Repositories;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Mock3.Persistence.Repositories
 {
@@ -49,29 +50,43 @@ namespace Mock3.Persistence.Repositories
 
 
 
-        public IEnumerable<UserExam> GetUserExams(int examId)
+        public async Task<IEnumerable<UserExam>> GetUserExamsByExamId(int examId, bool withDependencies)
         {
-            return _context.UserExams.Where(x => x.ExamId == examId).ToList();
+            return withDependencies
+                ? await _context.UserExams
+                    .Where(x => x.ExamId == examId)
+                    .Include(x => x.User)
+                    .Include(x => x.Exam)
+                    .Include(x => x.ExamTitle)
+                    .Include(x => x.Voucher).ToListAsync()
+                : await _context.UserExams
+                    .Where(x => x.ExamId == examId).ToListAsync();
         }
 
-        public IEnumerable<UserExam> GetUserExamWithDependenciesByUserId(string userId)
+
+        public async Task<IEnumerable<UserExam>> GetUserExamsByUserId(string userId, bool withDependencies)
         {
-            return _context.UserExams
-                .Where(x => x.UserId.Equals(userId))
-                .Include(x => x.User)
-                .Include(x => x.Exam)
-                .Include(x => x.Voucher).ToList();
+            return withDependencies
+                ? await _context.UserExams
+                    .Where(x => x.UserId == userId)
+                    .Include(x => x.User)
+                    .Include(x => x.Exam)
+                    .Include(x => x.ExamTitle)
+                    .Include(x => x.Voucher).ToListAsync()
+                : await _context.UserExams
+                    .Where(x => x.UserId == userId).ToListAsync();
         }
 
-        public UserExam GetUserExamById(int userExamId, bool withDependencies)
+        public async Task<UserExam> GetUserExamById(int userExamId, bool withDependencies)
         {
             return !withDependencies
-                ? _context.UserExams.FirstOrDefault(x => x.Id == userExamId)
-                : _context.UserExams
+                ? await _context.UserExams.FirstOrDefaultAsync(x => x.Id == userExamId)
+                : await _context.UserExams
                     .Include(x => x.User)
                     .Include(x => x.Exam)
                     .Include(x => x.Voucher)
-                    .FirstOrDefault(x => x.Id == userExamId);
+                    .Include(x => x.ExamTitle)
+                    .FirstOrDefaultAsync(x => x.Id == userExamId);
         }
 
 
