@@ -12,6 +12,7 @@ namespace Mock3.Core.Repositories
         bool Any();
         IEnumerable<UserExam> GetUserExams(int examId);
         IEnumerable<UserExam> GetUserExamWithDependenciesByUserId(string userId);
+        UserExam GetUserExamById(int userExamId, bool withDependencies);
         void Add(UserExam userExam);
         void Remove(UserExam userExam);
     }

@@ -63,6 +63,17 @@ namespace Mock3.Persistence.Repositories
                 .Include(x => x.Voucher).ToList();
         }
 
+        public UserExam GetUserExamById(int userExamId, bool withDependencies)
+        {
+            return !withDependencies
+                ? _context.UserExams.FirstOrDefault(x => x.Id == userExamId)
+                : _context.UserExams
+                    .Include(x => x.User)
+                    .Include(x => x.Exam)
+                    .Include(x => x.Voucher)
+                    .FirstOrDefault(x => x.Id == userExamId);
+        }
+
 
         public void Add(UserExam userExam)
         {

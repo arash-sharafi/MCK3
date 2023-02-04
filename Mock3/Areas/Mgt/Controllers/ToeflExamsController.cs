@@ -4,7 +4,6 @@ using Mock3.Core.Models;
 using Mock3.Enums;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -158,46 +157,50 @@ namespace Mock3.Areas.Mgt.Controllers
                 .UrgentScores
                 .GetSubmittedUrgentScores();
 
+            IEnumerable<UrgentScore> doneUrgentScoreRequests = new List<UrgentScore>();
             if (all)
-            {
-                urgentScoreRequests.ToList().AddRange(
-                     _unitOfWork
+                doneUrgentScoreRequests = _unitOfWork
                     .UrgentScores
-                    .GetDoneUrgentScores());
-            }
+                    .GetDoneUrgentScores();
+
+
+            urgentScoreRequests.ToList().AddRange(doneUrgentScoreRequests);
 
             var urgentScoreList = new List<UrgentScoreMgtViewModel>();
 
             foreach (var urgentScore in urgentScoreRequests)
             {
                 var registeredExamRecord = _unitOfWork.UserExams
-                    .Include(x => x.User)
-                    .Include(x => x.Voucher)
-                    .Include(x => x.Exam)
-                    .FirstOrDefault(x => x.Id == urgentScore.UserExamId);
+                    .GetUserExamById(userExamId: urgentScore.UserExamId, withDependencies: true);
 
                 if (registeredExamRecord == null)
                 {
                     continue;
                 }
 
-                urgentScoreList.Add(new UrgentScoreMgtViewModel()
-                {
-                    ExamId = registeredExamRecord.ExamId,
-                    CellPhoneNo = registeredExamRecord.User.CellPhoneNumber,
-                    ExamDesc = registeredExamRecord.Exam.Description,
-                    FullName = registeredExamRecord.User.FirstName + " " + registeredExamRecord.User.LastName,
-                    NationalCode = registeredExamRecord.User.NationalCode,
-                    StartDate = registeredExamRecord.Exam.StartDate,
-                    UserId = registeredExamRecord.UserId,
-                    VoucherNo = registeredExamRecord.Voucher.VoucherNo,
-                    UrgentScoreSubmitDate = urgentScore.SubmitDate,
-                    UserExamId = registeredExamRecord.Id,
-                    UrgentScoreStatus = (UrgentScoreStatus)urgentScore.Status
-                });
+                urgentScoreList.Add(GetUrgentScoreMgtViewModel(registeredExamRecord, urgentScore));
             }
 
             return View(urgentScoreList);
+        }
+
+        private static UrgentScoreMgtViewModel GetUrgentScoreMgtViewModel(
+            UserExam registeredExamRecord, UrgentScore urgentScore)
+        {
+            return new UrgentScoreMgtViewModel()
+            {
+                ExamId = registeredExamRecord.ExamId,
+                CellPhoneNo = registeredExamRecord.User.CellPhoneNumber,
+                ExamDesc = registeredExamRecord.Exam.Description,
+                FullName = registeredExamRecord.User.FirstName + " " + registeredExamRecord.User.LastName,
+                NationalCode = registeredExamRecord.User.NationalCode,
+                StartDate = registeredExamRecord.Exam.StartDate,
+                UserId = registeredExamRecord.UserId,
+                VoucherNo = registeredExamRecord.Voucher.VoucherNo,
+                UrgentScoreSubmitDate = urgentScore.SubmitDate,
+                UserExamId = registeredExamRecord.Id,
+                UrgentScoreStatus = (UrgentScoreStatus)urgentScore.Status
+            };
         }
     }
 }
