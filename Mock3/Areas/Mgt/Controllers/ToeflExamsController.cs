@@ -1,5 +1,4 @@
-﻿using Mock3.Areas.Mgt.ViewModels;
-using Mock3.Core;
+﻿using Mock3.Core;
 using Mock3.Core.Models;
 using Mock3.Enums;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Mock3.Core.ViewModels.Admin;
 
 namespace Mock3.Areas.Mgt.Controllers
 {

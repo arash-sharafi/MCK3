@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mock3.Areas.Mgt.ViewModels
+namespace Mock3.Core.ViewModels.Admin
 {
     public class ExamMgtViewModel
     {

@@ -188,12 +188,12 @@
     <Compile Include="Areas\Mgt\Controllers\ToeflExamTitlesController.cs" />
     <Compile Include="Areas\Mgt\Controllers\ToeflParticipantsController.cs" />
     <Compile Include="Areas\Mgt\MgtAreaRegistration.cs" />
-    <Compile Include="Areas\Mgt\ViewModels\ExamTitleMgtViewModel.cs" />
-    <Compile Include="Areas\Mgt\ViewModels\ExamMgtViewModel.cs" />
-    <Compile Include="Areas\Mgt\ViewModels\ParticipantMgtViewModel.cs" />
-    <Compile Include="Areas\Mgt\ViewModels\SetExamTitleForParticipantViewModel.cs" />
-    <Compile Include="Areas\Mgt\ViewModels\SubmitScoresForParticipantViewModel.cs" />
-    <Compile Include="Areas\Mgt\ViewModels\UrgentScoreMgtViewModel.cs" />
+    <Compile Include="Core\ViewModels\Admin\ExamTitleMgtViewModel.cs" />
+    <Compile Include="Core\ViewModels\Admin\ExamMgtViewModel.cs" />
+    <Compile Include="Core\ViewModels\Admin\ParticipantMgtViewModel.cs" />
+    <Compile Include="Core\ViewModels\Admin\SetExamTitleForParticipantViewModel.cs" />
+    <Compile Include="Core\ViewModels\Admin\SubmitScoresForParticipantViewModel.cs" />
+    <Compile Include="Core\ViewModels\Admin\UrgentScoreMgtViewModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ExamsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -401,7 +401,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Mgt\Data\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
