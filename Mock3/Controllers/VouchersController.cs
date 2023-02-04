@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Core;
 using Mock3.Core.Models;
+using Mock3.Core.Utilities;
 using Mock3.Core.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -117,7 +118,7 @@ namespace Mock3.Controllers
             }
 
             int beforeExamDate = GetDayBeforeExamDay(isVoucherConnectedToTheUser);
-            int today = Parse(Today().Replace("/", string.Empty));
+            int today = Parse(Utilities.Today().StringValue.Replace("/", string.Empty));
 
             bool isVoucherExpired = IsVoucherExpired(expirationDate);
 
@@ -227,7 +228,7 @@ namespace Mock3.Controllers
         {
             return new Voucher
             {
-                CreateDate = Today(),
+                CreateDate = Utilities.Today().StringValue,
                 UserId = currentUserId,
                 VoucherNo = GenerateNewVoucher(),
             };
@@ -269,14 +270,14 @@ namespace Mock3.Controllers
 
         private bool IsVoucherExpired(int expirationDate)
         {
-            int todayDateValue = Parse(Today().Replace("/", ""));
+            int todayDateValue = Parse(Utilities.Today().StringValue.Replace("/", ""));
             return todayDateValue > expirationDate;
         }
 
         private (VoucherStatus, string) GetUsedVoucherStatus(string examStartDate)
         {
             int examDate = Parse(examStartDate.Replace("/", string.Empty));
-            int today = Parse(Today().Replace("/", string.Empty));
+            int today = Parse(Utilities.Today().StringValue.Replace("/", string.Empty));
 
             var result = today < examDate ? VoucherStatus.RegisteredInAnExam : VoucherStatus.ExamIsPassed;
 
@@ -291,7 +292,7 @@ namespace Mock3.Controllers
 
         private (VoucherStatus, string) GetFreeVoucherStatus(Voucher voucher)
         {
-            int today = Parse(Today().Replace("/", string.Empty));
+            int today = Parse(Utilities.Today().StringValue.Replace("/", string.Empty));
             int voucherExpirationDate = Parse(GetVoucherExpirationDate(voucher.CreateDate, 6).Replace("/", string.Empty));
 
             var result = today > voucherExpirationDate ? VoucherStatus.Expired : VoucherStatus.ReadyToUse;
@@ -330,38 +331,6 @@ namespace Mock3.Controllers
                                         "0" + pc.GetDayOfMonth(monthsLater).ToString());
 
             return expirationDate;
-        }
-
-
-
-
-        private string Today()
-        {
-            var persian = new PersianCalendar();
-
-            var year = persian.GetYear(DateTime.Now).ToString();
-            string month;
-            string day;
-
-            if (persian.GetMonth(DateTime.Now) < 10)
-            {
-                month = "0" + persian.GetMonth(DateTime.Now).ToString();
-            }
-            else
-            {
-                month = persian.GetMonth(DateTime.Now).ToString();
-            }
-
-            if (persian.GetDayOfMonth(DateTime.Now) < 10)
-            {
-                day = "0" + persian.GetDayOfMonth(DateTime.Now).ToString();
-            }
-            else
-            {
-                day = persian.GetDayOfMonth(DateTime.Now).ToString();
-            }
-
-            return year + "/" + month + "/" + day;
         }
 
         private string GenerateNewVoucher()

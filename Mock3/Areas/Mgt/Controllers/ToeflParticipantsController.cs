@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Mock3.Core;
 using Mock3.Core.Models;
+using Mock3.Core.Utilities;
 using Mock3.Persistence;
 
 namespace Mock3.Areas.Mgt.Controllers
@@ -110,7 +111,7 @@ namespace Mock3.Areas.Mgt.Controllers
             modifiedParticipantRecord.ListeningScore = viewModel.ListeningScore;
             modifiedParticipantRecord.SpeakingScore = viewModel.SpeakingScore;
             modifiedParticipantRecord.WritingScore = viewModel.WritingScore;
-            modifiedParticipantRecord.ScoreSubmitDate = Today().StringValue;
+            modifiedParticipantRecord.ScoreSubmitDate = Utilities.Today().StringValue;
 
             _unitOfWork.Complete();
 
@@ -185,37 +186,5 @@ namespace Mock3.Areas.Mgt.Controllers
                 WritingScore = participant.WritingScore
             };
         }
-
-
-        private (string StringValue, int IntigerValue) Today()
-        {
-            var persian = new PersianCalendar();
-
-            var year = persian.GetYear(DateTime.Now).ToString();
-            string month;
-            string day;
-
-            if (persian.GetMonth(DateTime.Now) < 10)
-            {
-                month = "0" + persian.GetMonth(DateTime.Now).ToString();
-            }
-            else
-            {
-                month = persian.GetMonth(DateTime.Now).ToString();
-            }
-
-            if (persian.GetDayOfMonth(DateTime.Now) < 10)
-            {
-                day = "0" + persian.GetDayOfMonth(DateTime.Now).ToString();
-            }
-            else
-            {
-                day = persian.GetDayOfMonth(DateTime.Now).ToString();
-            }
-
-            return (year + "/" + month + "/" + day, Int32.Parse(year + month + day));
-        }
-
-
     }
 }
