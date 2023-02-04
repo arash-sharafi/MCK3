@@ -1,4 +1,5 @@
-﻿using Mock3.Core.Models;
+﻿using System.Collections.Generic;
+using Mock3.Core.Models;
 
 namespace Mock3.Core.Repositories
 {
@@ -6,5 +7,7 @@ namespace Mock3.Core.Repositories
     {
         Voucher GetVoucherByVoucherNumber(string voucherNumber);
         Voucher GetVoucherById(int voucherId);
+        IEnumerable<Voucher> GetVouchersByUserId(string userId);
+        void Add(Voucher voucher);
     }
 }

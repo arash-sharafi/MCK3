@@ -1,30 +1,31 @@
 ﻿using Mock3.Areas.Mgt.ViewModels;
+using Mock3.Core;
+using Mock3.Core.Models;
 using Mock3.Enums;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
-using Mock3.Core.Models;
-using Mock3.Persistence;
 
 namespace Mock3.Areas.Mgt.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ToeflExamsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ToeflExamsController()
+        public ToeflExamsController(IUnitOfWork unitOfWork)
         {
-            _context = new ApplicationDbContext();
+            _unitOfWork = unitOfWork;
         }
         // GET: Mgt/ToeflExams
         public ActionResult Index()
         {
-            var exams = _context
-                .Exams
-                .OrderBy(x => x.StartDate)
-                .ToList();
+            var exams = _unitOfWork.Exams
+                .GetExams()
+                .OrderBy(x => x.StartDate);
+
             return View(exams);
         }
 
@@ -40,7 +41,7 @@ namespace Mock3.Areas.Mgt.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            _context.Exams.Add(new Exam
+            _unitOfWork.Exams.Add(new Exam
             {
                 Name = model.Name,
                 StartDate = model.StartDate,
@@ -50,16 +51,17 @@ namespace Mock3.Areas.Mgt.Controllers
                 IsOpen = true
             });
 
-            _context.SaveChanges();
+            _unitOfWork.Complete();
 
             return RedirectToAction("Index");
         }
 
         public ActionResult Edit(int id)
         {
-            var exam = _context.Exams.Find(id);
+            var exam = _unitOfWork.Exams.GetExamById(id);
 
-            if (exam == null) return RedirectToAction("Index");
+            if (exam == null)
+                throw new NullReferenceException();
 
 
             var model = new ExamMgtViewModel
@@ -82,7 +84,7 @@ namespace Mock3.Areas.Mgt.Controllers
                 return View(model);
 
 
-            var exam = _context.Exams.Find(model.Id);
+            var exam = _unitOfWork.Exams.GetExamById(model.Id);
 
             if (exam == null) return RedirectToAction("Index");
 
@@ -91,7 +93,7 @@ namespace Mock3.Areas.Mgt.Controllers
             exam.Description = model.Description;
             exam.StartDate = model.StartDate;
 
-            _context.SaveChanges();
+            _unitOfWork.Complete();
 
             return RedirectToAction("Index");
         }
@@ -100,12 +102,13 @@ namespace Mock3.Areas.Mgt.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
-            var exam = _context.Exams.Find(id);
+            var exam = _unitOfWork.Exams.GetExamById(id);
 
-            if (exam == null) return RedirectToAction("Index");
+            if (exam == null)
+                throw new NullReferenceException();
 
-            _context.Exams.Remove(exam);
-            _context.SaveChanges();
+            _unitOfWork.Exams.Remove(exam);
+            _unitOfWork.Complete();
 
             return RedirectToAction("Index");
 
@@ -115,14 +118,15 @@ namespace Mock3.Areas.Mgt.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CloseRegistration(int id)
         {
-            var exam = _context.Exams.Find(id);
+            var exam = _unitOfWork.Exams.GetExamById(id);
 
-            if (exam == null) return RedirectToAction("Index");
+            if (exam == null)
+                throw new NullReferenceException();
 
             if (exam.IsOpen)
             {
                 exam.IsOpen = false;
-                _context.SaveChanges();
+                _unitOfWork.Complete();
             }
 
             return RedirectToAction("Index");
@@ -133,14 +137,15 @@ namespace Mock3.Areas.Mgt.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult OpenRegistration(int id)
         {
-            var exam = _context.Exams.Find(id);
+            var exam = _unitOfWork.Exams.GetExamById(id);
 
-            if (exam == null) return RedirectToAction("Index");
+            if (exam == null)
+                throw new NullReferenceException();
 
             if (!exam.IsOpen)
             {
                 exam.IsOpen = true;
-                _context.SaveChanges();
+                _unitOfWork.Complete();
             }
 
             return RedirectToAction("Index");
@@ -149,27 +154,23 @@ namespace Mock3.Areas.Mgt.Controllers
         [HttpGet]
         public ActionResult UrgentScores(bool all = false)
         {
-            var urgentScoreRequests = _context
+            var urgentScoreRequests = _unitOfWork
                 .UrgentScores
-                .Where(x => x.Status == (int)UrgentScoreStatus.Submitted)
-                .OrderBy(x => x.SubmitDate)
-                .ToList();
+                .GetSubmittedUrgentScores();
 
             if (all)
             {
-                urgentScoreRequests.AddRange(
-                     _context
+                urgentScoreRequests.ToList().AddRange(
+                     _unitOfWork
                     .UrgentScores
-                    .Where(x => x.Status != (int)UrgentScoreStatus.Submitted)
-                    .OrderBy(x => x.SubmitDate)
-                    .ToList());
+                    .GetDoneUrgentScores());
             }
 
             var urgentScoreList = new List<UrgentScoreMgtViewModel>();
 
             foreach (var urgentScore in urgentScoreRequests)
             {
-                var registeredExamRecord = _context.UserExams
+                var registeredExamRecord = _unitOfWork.UserExams
                     .Include(x => x.User)
                     .Include(x => x.Voucher)
                     .Include(x => x.Exam)

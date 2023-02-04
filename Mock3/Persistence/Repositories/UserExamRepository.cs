@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Mock3.Core.Models;
+using Mock3.Core.Repositories;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Mock3.Core.Models;
-using Mock3.Core.Repositories;
 
 namespace Mock3.Persistence.Repositories
 {
@@ -15,7 +15,7 @@ namespace Mock3.Persistence.Repositories
             _context = context;
         }
 
-        public UserExam GetUserExamByForeignKeys(string userId, int? examId, int? voucherId)
+        public UserExam GetUserExamByForeignKeys(string userId, int examId, int voucherId)
         {
             return _context.UserExams
                 .FirstOrDefault(x => x.UserId == userId
@@ -23,13 +23,25 @@ namespace Mock3.Persistence.Repositories
                                      && x.VoucherId == voucherId);
         }
 
-        public UserExam GetUserExamByForeignKeys(string userId, int? examId)
+        public UserExam GetUserExamByForeignKeys(string userId, int examId)
         {
             return _context.UserExams
                 .FirstOrDefault(x => x.UserId == userId
                                      && x.ExamId == examId);
         }
 
+        public UserExam GetUserExamByForeignKeys(int voucherId, string userId)
+        {
+            return _context.UserExams
+                .FirstOrDefault(
+                    x => x.UserId == userId
+                    && x.VoucherId == voucherId);
+        }
+
+        public UserExam GetUserExamByVoucherId(int voucherId)
+        {
+            return _context.UserExams.FirstOrDefault(x => x.VoucherId == voucherId);
+        }
         public bool Any()
         {
             return _context.UserExams.Any();
@@ -42,10 +54,11 @@ namespace Mock3.Persistence.Repositories
             return _context.UserExams.Where(x => x.ExamId == examId).ToList();
         }
 
-        public IEnumerable<UserExam> GetUserExamWithDependenciesByUserId(string UserId)
+        public IEnumerable<UserExam> GetUserExamWithDependenciesByUserId(string userId)
         {
             return _context.UserExams
-                .Where(x => x.UserId.Equals(UserId))
+                .Where(x => x.UserId.Equals(userId))
+                .Include(x => x.User)
                 .Include(x => x.Exam)
                 .Include(x => x.Voucher).ToList();
         }
@@ -54,6 +67,11 @@ namespace Mock3.Persistence.Repositories
         public void Add(UserExam userExam)
         {
             _context.UserExams.Add(userExam);
+        }
+
+        public void Remove(UserExam userExam)
+        {
+            _context.UserExams.Remove(userExam);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Mock3.Core.Models;
+﻿using Mock3.Core.Models;
+using System.Collections.Generic;
 
 namespace Mock3.Core.Repositories
 {
@@ -7,5 +7,7 @@ namespace Mock3.Core.Repositories
     {
         IEnumerable<Exam> GetExams();
         Exam GetExamById(int examId);
+        void Add(Exam exam);
+        void Remove(Exam exam);
     }
 }

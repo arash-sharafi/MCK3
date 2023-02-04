@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNet.Identity;
+using Mock3.Core;
+using Mock3.Core.Models;
+using Mock3.Core.ViewModels;
 using Mock3.Enums;
-using Mock3.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
-using Mock3.Core;
-using Mock3.Core.Models;
-using Mock3.Core.ViewModels;
 
 namespace Mock3.Controllers
 {
@@ -40,17 +39,18 @@ namespace Mock3.Controllers
 
 
 
-        public ActionResult Register(int examId)
+        public ActionResult Register(int id)
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Register(int examId, RegisterExamViewModel model)
+        public ActionResult Register(int id, RegisterExamViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
+            int examId = id;
 
             var currentUserId = User.Identity.GetUserId();
 
@@ -101,7 +101,7 @@ namespace Mock3.Controllers
             if (registeredExam != null)
                 registeredExam.RemainingCapacity -= 1;
 
-            _unitOfWork.Complete(); ;
+            _unitOfWork.Complete(); 
 
             return RedirectToAction("Index", "Home");
         }
