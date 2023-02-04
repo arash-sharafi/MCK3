@@ -188,6 +188,11 @@
     <Compile Include="Areas\Mgt\Controllers\ToeflExamTitlesController.cs" />
     <Compile Include="Areas\Mgt\Controllers\ToeflParticipantsController.cs" />
     <Compile Include="Areas\Mgt\MgtAreaRegistration.cs" />
+    <Compile Include="Core\OnlinePaymentService\IOnlinePayment.cs" />
+    <Compile Include="Core\OnlinePaymentService\Contracts\PaymentRequest.cs" />
+    <Compile Include="Core\OnlinePaymentService\Contracts\PaymentResponse.cs" />
+    <Compile Include="Core\OnlinePaymentService\Contracts\PaymentVerifyRequest.cs" />
+    <Compile Include="Core\OnlinePaymentService\Contracts\PaymentVerifyResponse.cs" />
     <Compile Include="Core\ViewModels\Admin\ExamTitleMgtViewModel.cs" />
     <Compile Include="Core\ViewModels\Admin\ExamMgtViewModel.cs" />
     <Compile Include="Core\ViewModels\Admin\ParticipantMgtViewModel.cs" />
