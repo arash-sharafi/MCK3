@@ -5,8 +5,8 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Mock3.Core.Models;
+using Mock3.Infrastructure.Persistence;
 using Owin;
-using Mock3.Persistence;
 
 namespace Mock3
 {

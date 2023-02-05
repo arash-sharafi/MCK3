@@ -11,7 +11,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Mock3.Core.Models;
-using Mock3.Persistence;
+using Mock3.Infrastructure.Persistence;
 
 namespace Mock3
 {

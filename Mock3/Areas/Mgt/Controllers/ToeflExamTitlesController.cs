@@ -4,7 +4,6 @@ using System.Web.Mvc;
 using Mock3.Core;
 using Mock3.Core.Models;
 using Mock3.Core.ViewModels.Admin;
-using Mock3.Persistence;
 
 namespace Mock3.Areas.Mgt.Controllers
 {

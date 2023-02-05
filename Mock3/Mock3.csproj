@@ -196,7 +196,7 @@
     <Compile Include="Core\Repositories\IUserRepository.cs" />
     <Compile Include="Core\ViewModels\VoucherPurchaseResultViewModel.cs" />
     <Compile Include="Infrastructure\Services\OnlinePayment\OnlinePayment.cs" />
-    <Compile Include="Persistence\Repositories\UserRepository.cs" />
+    <Compile Include="Infrastructure\Persistence\Repositories\UserRepository.cs" />
     <Compile Include="Core\ViewModels\Admin\ExamTitleMgtViewModel.cs" />
     <Compile Include="Core\ViewModels\Admin\ExamMgtViewModel.cs" />
     <Compile Include="Core\ViewModels\Admin\ParticipantMgtViewModel.cs" />
@@ -213,86 +213,86 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202210131752233_InitialModel.cs" />
-    <Compile Include="Persistence\Migrations\202210131752233_InitialModel.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202210131752233_InitialModel.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202210131752233_InitialModel.Designer.cs">
       <DependentUpon>202210131752233_InitialModel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202210131759479_CreateVoucherTable.cs" />
-    <Compile Include="Persistence\Migrations\202210131759479_CreateVoucherTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202210131759479_CreateVoucherTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202210131759479_CreateVoucherTable.Designer.cs">
       <DependentUpon>202210131759479_CreateVoucherTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202210131808373_OCForVoucher.cs" />
-    <Compile Include="Persistence\Migrations\202210131808373_OCForVoucher.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202210131808373_OCForVoucher.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202210131808373_OCForVoucher.Designer.cs">
       <DependentUpon>202210131808373_OCForVoucher.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202210131858417_CreateExamTable.cs" />
-    <Compile Include="Persistence\Migrations\202210131858417_CreateExamTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202210131858417_CreateExamTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202210131858417_CreateExamTable.Designer.cs">
       <DependentUpon>202210131858417_CreateExamTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202210132144228_CreateUserExamTable.cs" />
-    <Compile Include="Persistence\Migrations\202210132144228_CreateUserExamTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202210132144228_CreateUserExamTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202210132144228_CreateUserExamTable.Designer.cs">
       <DependentUpon>202210132144228_CreateUserExamTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202210132158437_PopulateExamTable.cs" />
-    <Compile Include="Persistence\Migrations\202210132158437_PopulateExamTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202210132158437_PopulateExamTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202210132158437_PopulateExamTable.Designer.cs">
       <DependentUpon>202210132158437_PopulateExamTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202210132222278_CreateExamScoreTable.cs" />
-    <Compile Include="Persistence\Migrations\202210132222278_CreateExamScoreTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202210132222278_CreateExamScoreTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202210132222278_CreateExamScoreTable.Designer.cs">
       <DependentUpon>202210132222278_CreateExamScoreTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202210141939582_OCForExamScore.cs" />
-    <Compile Include="Persistence\Migrations\202210141939582_OCForExamScore.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202210141939582_OCForExamScore.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202210141939582_OCForExamScore.Designer.cs">
       <DependentUpon>202210141939582_OCForExamScore.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202210272054579_ExtendApplicationUser.cs" />
-    <Compile Include="Persistence\Migrations\202210272054579_ExtendApplicationUser.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202210272054579_ExtendApplicationUser.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202210272054579_ExtendApplicationUser.Designer.cs">
       <DependentUpon>202210272054579_ExtendApplicationUser.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202211051641097_UpdateUserExamTable.cs" />
-    <Compile Include="Persistence\Migrations\202211051641097_UpdateUserExamTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202211051641097_UpdateUserExamTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202211051641097_UpdateUserExamTable.Designer.cs">
       <DependentUpon>202211051641097_UpdateUserExamTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202211081637372_CreateExamTitlesTable.cs" />
-    <Compile Include="Persistence\Migrations\202211081637372_CreateExamTitlesTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202211081637372_CreateExamTitlesTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202211081637372_CreateExamTitlesTable.Designer.cs">
       <DependentUpon>202211081637372_CreateExamTitlesTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202211081646503_addExamTitleIdToUserExamTable.cs" />
-    <Compile Include="Persistence\Migrations\202211081646503_addExamTitleIdToUserExamTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202211081646503_addExamTitleIdToUserExamTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202211081646503_addExamTitleIdToUserExamTable.Designer.cs">
       <DependentUpon>202211081646503_addExamTitleIdToUserExamTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202301221626390_CreateInvoice_And_PurchaseType_Tables.cs" />
-    <Compile Include="Persistence\Migrations\202301221626390_CreateInvoice_And_PurchaseType_Tables.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202301221626390_CreateInvoice_And_PurchaseType_Tables.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202301221626390_CreateInvoice_And_PurchaseType_Tables.Designer.cs">
       <DependentUpon>202301221626390_CreateInvoice_And_PurchaseType_Tables.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202301221632260_PopulatePurchageTypeTable.cs" />
-    <Compile Include="Persistence\Migrations\202301221632260_PopulatePurchageTypeTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202301221632260_PopulatePurchageTypeTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202301221632260_PopulatePurchageTypeTable.Designer.cs">
       <DependentUpon>202301221632260_PopulatePurchageTypeTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\202301222329319_CreateUrgentScoresTable.cs" />
-    <Compile Include="Persistence\Migrations\202301222329319_CreateUrgentScoresTable.Designer.cs">
+    <Compile Include="Infrastructure\Persistence\Migrations\202301222329319_CreateUrgentScoresTable.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202301222329319_CreateUrgentScoresTable.Designer.cs">
       <DependentUpon>202301222329319_CreateUrgentScoresTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Persistence\Migrations\Configuration.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\Configuration.cs" />
     <Compile Include="Core\Models\ExamTitle.cs" />
     <Compile Include="Core\Models\Invoice.cs" />
     <Compile Include="Core\Models\PurchaseType.cs" />
     <Compile Include="Core\Models\UrgentScore.cs" />
     <Compile Include="Core\IUnitOfWork.cs" />
-    <Compile Include="Persistence\Repositories\ExamTitleRepository.cs" />
-    <Compile Include="Persistence\UnitOfWork.cs" />
-    <Compile Include="Persistence\Repositories\ExamRepository.cs" />
+    <Compile Include="Infrastructure\Persistence\Repositories\ExamTitleRepository.cs" />
+    <Compile Include="Infrastructure\Persistence\UnitOfWork.cs" />
+    <Compile Include="Infrastructure\Persistence\Repositories\ExamRepository.cs" />
     <Compile Include="Core\Repositories\IExamRepository.cs" />
     <Compile Include="Core\Repositories\IInvoiceRepository.cs" />
-    <Compile Include="Persistence\Repositories\InvoiceRepository.cs" />
+    <Compile Include="Infrastructure\Persistence\Repositories\InvoiceRepository.cs" />
     <Compile Include="Core\Repositories\IUrgentScoreRepository.cs" />
     <Compile Include="Core\Repositories\IUserExamRepository.cs" />
     <Compile Include="Core\Repositories\IVoucherRepository.cs" />
-    <Compile Include="Persistence\Repositories\UrgentScoreRepository.cs" />
-    <Compile Include="Persistence\Repositories\UserExamRepository.cs" />
-    <Compile Include="Persistence\Repositories\VoucherRepository.cs" />
+    <Compile Include="Infrastructure\Persistence\Repositories\UrgentScoreRepository.cs" />
+    <Compile Include="Infrastructure\Persistence\Repositories\UserExamRepository.cs" />
+    <Compile Include="Infrastructure\Persistence\Repositories\VoucherRepository.cs" />
     <Compile Include="Core\ViewModels\ForgotPasswordViewModel.cs" />
-    <Compile Include="Persistence\ApplicationDbContext.cs" />
+    <Compile Include="Infrastructure\Persistence\ApplicationDbContext.cs" />
     <Compile Include="Core\Models\ApplicationUser.cs" />
     <Compile Include="Core\Models\Exam.cs" />
     <Compile Include="Core\ViewModels\ExternalLoginConfirmationViewModel.cs" />
@@ -310,7 +310,7 @@
     <Compile Include="Core\ViewModels\RegisterViewModel.cs" />
     <Compile Include="Core\ViewModels\ResetPasswordViewModel.cs" />
     <Compile Include="Core\ViewModels\SendCodeViewModel.cs" />
-    <Compile Include="Enums\UrgentScoreStatus.cs" />
+    <Compile Include="Core\Enums\UrgentScoreStatus.cs" />
     <Compile Include="Core\ViewModels\UserExamDetailsViewModel.cs" />
     <Compile Include="Core\ViewModels\UserVoucherDetailsViewModel.cs" />
     <Compile Include="Core\ViewModels\VerifyCodeViewModel.cs" />
@@ -320,13 +320,13 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\images\Logo-White.png" />
+    <Content Include="Content\images\Logo-Yellow.png" />
+    <Content Include="Content\images\TplusBannerNew.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Content\images\1.jpg" />
-    <Content Include="Content\images\Logo-White.png" />
-    <Content Include="Content\images\Logo-Yellow.png" />
     <Content Include="Content\fonts\IRANSansWeb%28FaNum%29.woff2" />
     <Content Include="Content\fonts\IRANSansWeb%28FaNum%29_Bold.woff2" />
     <Content Include="Content\fonts\IRANSansWeb%28FaNum%29_Light.woff2" />
@@ -355,7 +355,6 @@
     <Content Include="Areas\Mgt\Views\ToeflParticipants\SubmitScores.cshtml" />
     <Content Include="Areas\Mgt\Views\ToeflExams\UrgentScores.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
-    <Content Include="Content\images\telephone.svg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -418,49 +417,49 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Persistence\Migrations\202210131752233_InitialModel.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202210131752233_InitialModel.resx">
       <DependentUpon>202210131752233_InitialModel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202210131759479_CreateVoucherTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202210131759479_CreateVoucherTable.resx">
       <DependentUpon>202210131759479_CreateVoucherTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202210131808373_OCForVoucher.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202210131808373_OCForVoucher.resx">
       <DependentUpon>202210131808373_OCForVoucher.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202210131858417_CreateExamTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202210131858417_CreateExamTable.resx">
       <DependentUpon>202210131858417_CreateExamTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202210132144228_CreateUserExamTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202210132144228_CreateUserExamTable.resx">
       <DependentUpon>202210132144228_CreateUserExamTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202210132158437_PopulateExamTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202210132158437_PopulateExamTable.resx">
       <DependentUpon>202210132158437_PopulateExamTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202210132222278_CreateExamScoreTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202210132222278_CreateExamScoreTable.resx">
       <DependentUpon>202210132222278_CreateExamScoreTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202210141939582_OCForExamScore.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202210141939582_OCForExamScore.resx">
       <DependentUpon>202210141939582_OCForExamScore.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202210272054579_ExtendApplicationUser.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202210272054579_ExtendApplicationUser.resx">
       <DependentUpon>202210272054579_ExtendApplicationUser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202211051641097_UpdateUserExamTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202211051641097_UpdateUserExamTable.resx">
       <DependentUpon>202211051641097_UpdateUserExamTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202211081637372_CreateExamTitlesTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202211081637372_CreateExamTitlesTable.resx">
       <DependentUpon>202211081637372_CreateExamTitlesTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202211081646503_addExamTitleIdToUserExamTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202211081646503_addExamTitleIdToUserExamTable.resx">
       <DependentUpon>202211081646503_addExamTitleIdToUserExamTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202301221626390_CreateInvoice_And_PurchaseType_Tables.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202301221626390_CreateInvoice_And_PurchaseType_Tables.resx">
       <DependentUpon>202301221626390_CreateInvoice_And_PurchaseType_Tables.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202301221632260_PopulatePurchageTypeTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202301221632260_PopulatePurchageTypeTable.resx">
       <DependentUpon>202301221632260_PopulatePurchageTypeTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Persistence\Migrations\202301222329319_CreateUrgentScoresTable.resx">
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202301222329319_CreateUrgentScoresTable.resx">
       <DependentUpon>202301222329319_CreateUrgentScoresTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

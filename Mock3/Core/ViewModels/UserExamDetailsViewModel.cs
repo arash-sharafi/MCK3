@@ -1,4 +1,4 @@
-﻿using Mock3.Enums;
+﻿using Mock3.Core.Enums;
 
 namespace Mock3.Core.ViewModels
 {
