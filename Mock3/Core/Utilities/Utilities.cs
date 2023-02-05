@@ -31,8 +31,7 @@ namespace Mock3.Core.Utilities
                 day = persian.GetDayOfMonth(DateTime.Now).ToString();
             }
 
-            return (year + "/" + month + "/" + day, Int32.Parse(year + month + day));
+            return (year + "/" + month + "/" + day, int.Parse(year + month + day));
         }
-
     }
 }

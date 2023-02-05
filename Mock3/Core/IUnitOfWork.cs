@@ -10,6 +10,7 @@ namespace Mock3.Core
         IInvoiceRepository Invoices { get; }
         IUrgentScoreRepository UrgentScores { get; }
         IExamTitleRepository ExamTitles { get; }
+        IUserRepository Users { get; }
         void Complete();
     }
 }

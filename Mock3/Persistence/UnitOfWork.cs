@@ -1,5 +1,4 @@
 ﻿using Mock3.Core;
-using Mock3.Core.Models;
 using Mock3.Core.Repositories;
 using Mock3.Persistence.Repositories;
 
@@ -15,6 +14,7 @@ namespace Mock3.Persistence
         public IInvoiceRepository Invoices { get; private set; }
         public IUrgentScoreRepository UrgentScores { get; private set; }
         public IExamTitleRepository ExamTitles { get; private set; }
+        public IUserRepository Users { get; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -25,6 +25,7 @@ namespace Mock3.Persistence
             Invoices = new InvoiceRepository(context);
             UrgentScores = new UrgentScoreRepository(context);
             ExamTitles = new ExamTitleRepository(context);
+            Users = new UserRepository(context);
         }
 
         public void Complete()

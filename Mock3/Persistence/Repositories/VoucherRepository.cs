@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Mock3.Core.Models;
+using Mock3.Core.Repositories;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Mock3.Core.Models;
-using Mock3.Core.Repositories;
 
 namespace Mock3.Persistence.Repositories
 {

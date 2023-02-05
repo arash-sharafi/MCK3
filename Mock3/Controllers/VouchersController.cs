@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Core;
 using Mock3.Core.Models;
+using Mock3.Core.OnlinePaymentService;
+using Mock3.Core.OnlinePaymentService.Contracts;
 using Mock3.Core.Utilities;
 using Mock3.Core.ViewModels;
 using System;
@@ -18,10 +20,15 @@ namespace Mock3.Controllers
     public class VouchersController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IOnlinePayment _onlinePayment;
+        private const int VoucherPrice = 150000;
+        private const string SuccessfullyVerified = "SUCCESSFUL";
+        private const string AcceptedPayment = "ACCEPTED";
 
-        public VouchersController(IUnitOfWork unitOfWork)
+        public VouchersController(IUnitOfWork unitOfWork, IOnlinePayment onlinePayment)
         {
             _unitOfWork = unitOfWork;
+            _onlinePayment = onlinePayment;
         }
         // GET: Vouchers
         public ActionResult Buy()
@@ -33,18 +40,64 @@ namespace Mock3.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Buy(int voucherCount)
         {
-            var currentUserId = User.Identity.GetUserId();
+            var userDetails = _unitOfWork.Users.GetUserById(User.Identity.GetUserId());
 
-
-            for (int v = 1; v <= voucherCount; v++)
+            var paymentResponse = _onlinePayment.Payment(new PaymentRequest()
             {
-                _unitOfWork.Vouchers.Add(AddNewVoucher(currentUserId));
+                Description = "خرید ووچر آزمون آزمایشی تافل",
+                PayerEmail = userDetails.Email,
+                PayerFullName = userDetails.FirstName + " " + userDetails.LastName,
+                PayerCellPhoneNumber = userDetails.CellPhoneNumber,
+                Price = (VoucherPrice * voucherCount)
+            });
 
+            if (paymentResponse.Status.Trim().Equals(AcceptedPayment))
+            {
+                return RedirectToAction("VoucherPurchaseResult",
+                    new { id = voucherCount, referenceNumber = paymentResponse.ReferenceNumber });
+            }
+            else
+            {
+                throw new Exception(paymentResponse.Error);
+            }
+        }
+
+        public ActionResult VoucherPurchaseResult(int id, string refNo)
+        {
+            var voucherCount = id;
+            var verifyPaymentResponse = _onlinePayment.VerifyPayment(new PaymentVerifyRequest()
+            {
+                Price = (voucherCount * VoucherPrice),
+                ReferenceNumber = refNo
+            });
+
+            var viewModel = new VoucherPurchaseResultViewModel
+            {
+                ReferenceNumber = refNo
+            };
+
+
+            if (verifyPaymentResponse.Status.Trim().Equals(SuccessfullyVerified))
+            {
+
+                for (var v = 1; v <= voucherCount; v++)
+                {
+                    var newVoucher = AddNewVoucher(User.Identity.GetUserId());
+                    _unitOfWork.Vouchers.Add(newVoucher);
+                    viewModel.Vouchers.Add(newVoucher.VoucherNo);
+                }
+
+                viewModel.Message = verifyPaymentResponse.Message;
+                viewModel.AmountPaid = verifyPaymentResponse.AmountPaid.ToString();
+
+                _unitOfWork.Complete();
+            }
+            else
+            {
+                viewModel.Error = verifyPaymentResponse.Error;
             }
 
-            _unitOfWork.Complete();
-
-            return RedirectToAction("Index", "Home");
+            return View(viewModel);
         }
 
         public async Task<ActionResult> VouchersDetails()

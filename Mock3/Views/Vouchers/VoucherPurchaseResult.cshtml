@@ -1,0 +1,45 @@
+﻿@model Mock3.Core.ViewModels.VoucherPurchaseResultViewModel
+@{
+    ViewBag.Title = "وضعیت خرید انجام شده";
+}
+
+<h2>جزئیات خرید شما</h2>
+@if (Model.Error != null)
+{
+    <div style="border:1px solid black;font-family:'B Yekan';width:50%;border-radius:10px;margin:20px auto;padding:50px">
+        <H2 style="font-family:'B Titr';color:red">
+            خرید ناموفق
+        </H2>
+        <p>
+            جزئیات: @Model.Error
+        </p>
+    </div>
+}
+else
+{
+    <div style="border:1px solid black;font-family:'B Yekan';width:50%;border-radius:10px;margin:20px auto;padding:50px">
+        <H2 style="font-family:'B Titr'">
+            @Model.Message
+        </H2>
+        <p>
+            شماره رسید: @Model.ReferenceNumber
+        </p>
+        <p>
+            مبلغ خرید: @($"{(Model.AmountPaid):0n}") تومان
+        </p>
+        <p>
+            کد ووچر(ها):
+            <br />
+            @foreach (var voucher in Model.Vouchers)
+            {
+                <strong>@voucher</strong>
+            }
+        </p>
+        <br />
+        <h2 style="font-family:'B Titr';color:#ff0000">
+            از اطلاعات این صفحه محافظت نمائید
+        </h2>
+    </div>
+}
+
+

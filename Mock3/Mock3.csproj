@@ -193,6 +193,10 @@
     <Compile Include="Core\OnlinePaymentService\Contracts\PaymentResponse.cs" />
     <Compile Include="Core\OnlinePaymentService\Contracts\PaymentVerifyRequest.cs" />
     <Compile Include="Core\OnlinePaymentService\Contracts\PaymentVerifyResponse.cs" />
+    <Compile Include="Core\Repositories\IUserRepository.cs" />
+    <Compile Include="Core\ViewModels\VoucherPurchaseResultViewModel.cs" />
+    <Compile Include="Infrastructure\Services\OnlinePayment\OnlinePayment.cs" />
+    <Compile Include="Persistence\Repositories\UserRepository.cs" />
     <Compile Include="Core\ViewModels\Admin\ExamTitleMgtViewModel.cs" />
     <Compile Include="Core\ViewModels\Admin\ExamMgtViewModel.cs" />
     <Compile Include="Core\ViewModels\Admin\ParticipantMgtViewModel.cs" />
@@ -403,6 +407,7 @@
     <Content Include="Views\Exams\Register.cshtml" />
     <Content Include="Views\Vouchers\VouchersDetails.cshtml" />
     <Content Include="Views\Exams\ExamsDetails.cshtml" />
+    <Content Include="Views\Vouchers\VoucherPurchaseResult.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -12,4 +12,5 @@ namespace Mock3.Core.OnlinePaymentService
         PaymentResponse Payment(PaymentRequest request);
         PaymentVerifyResponse VerifyPayment(PaymentVerifyRequest request);
     }
+
 }
