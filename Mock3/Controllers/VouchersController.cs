@@ -22,6 +22,7 @@ namespace Mock3.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOnlinePayment _onlinePayment;
         private const int VoucherPrice = 150000;
+        private const int ReleaseVoucherPrice = 60000;
         private const string SuccessfullyVerified = "SUCCESSFUL";
         private const string AcceptedPayment = "ACCEPTED";
 
@@ -178,36 +179,37 @@ namespace Mock3.Controllers
 
             if (today >= beforeExamDate)
             {
-                TempData["Message"] = "فرصت تغییر تاریخ تا ابتدای روز قبل از آزمون می باشد و متاسفانه در این زمان امکان تغییر تاریخ میسر نمی باشد.";
-                return RedirectToAction("VouchersDetails");
+                throw new InvalidOperationException();
             }
 
             if (isVoucherExpired)
             {
-                TempData["Message"] = "تاریخ انقضاء این ووچر فرا رسیده است و در این حالت تغییر تاریخ امکانپذیر نیست.";
-                return RedirectToAction("VouchersDetails");
+                throw new InvalidOperationException();
             }
 
-            //Real Payment system confirmation goes here
-            bool paymentConfirmed = true;
+            var userDetails = _unitOfWork.Users.GetUserById(currentUserId);
 
-            if (paymentConfirmed)
+            var paymentResponse = _onlinePayment.Payment(new PaymentRequest()
             {
-                if (ReleaseVoucher(voucher))
-                {
-                    TempData["Message"] = "ووچر مورد نظر هم اکنون قابل استفاده است.";
-                    return RedirectToAction("VouchersDetails");
-                }
-                else
-                {
-                    TempData["Message"] = "بروز خطا در آزادسازی ووچر.";
-                    return RedirectToAction("VouchersDetails");
-                }
+                Description = "خرید سرویس آزادسازی ووچر",
+                PayerEmail = userDetails.Email,
+                PayerFullName = userDetails.FirstName + " " + userDetails.LastName,
+                PayerCellPhoneNumber = userDetails.CellPhoneNumber,
+                Price = ReleaseVoucherPrice
+            });
 
+            if (paymentResponse.Status.Trim().Equals(AcceptedPayment))
+            {
+
+                return RedirectToAction("ReleaseVoucherPurchaseResult",
+                    new { refNo = paymentResponse.ReferenceNumber, voucherId });
             }
-
-            return View();
+            else
+            {
+                throw new Exception(paymentResponse.Error);
+            }
         }
+
 
         private int GetDayBeforeExamDay(UserExam isVoucherConnectedToTheUser)
         {
@@ -293,7 +295,7 @@ namespace Mock3.Controllers
         {
             var invoice = new Invoice()
             {
-                Price = "60000",
+                Price = ReleaseVoucherPrice.ToString(),
                 Description = "آزادسازی ووچر آزمون آزمایشی تافل به شماره " + voucher.VoucherNo,
                 PurchaseTypeId = (int)PurchaseTypeEnum.ReleaseVoucher,
                 UserId = User.Identity.GetUserId()
@@ -372,5 +374,41 @@ namespace Mock3.Controllers
             return voucher.ToString();
         }
 
+        public ActionResult ReleaseVoucherPurchaseResult(string refNo, int voucherId)
+        {
+            var verifyPaymentResponse = _onlinePayment.VerifyPayment(new PaymentVerifyRequest()
+            {
+                Price = ReleaseVoucherPrice,
+                ReferenceNumber = refNo
+            });
+
+            var viewModel = new PurchaseResultViewModel()
+            {
+                ReferenceNumber = refNo
+            };
+
+
+            if (verifyPaymentResponse.Status.Trim().Equals(SuccessfullyVerified))
+            {
+                string currentUserId = User.Identity.GetUserId();
+
+                var voucher = _unitOfWork.Vouchers.GetVoucherById(voucherId);
+                if (voucher == null)
+                {
+                    throw new NullReferenceException();
+                }
+
+                ReleaseVoucher(voucher);
+
+                viewModel.Message = verifyPaymentResponse.Message;
+                viewModel.AmountPaid = verifyPaymentResponse.AmountPaid.ToString();
+            }
+            else
+            {
+                viewModel.Error = verifyPaymentResponse.Error;
+            }
+
+            return View(viewModel);
+        }
     }
 }

@@ -181,18 +181,15 @@ namespace Mock3.Controllers
 
             if (paymentResponse.Status.Trim().Equals(AcceptedPayment))
             {
-                if (SubmitUrgentScore(userExam))
-                {
-                    return RedirectToAction("UrgentScorePurchaseResult",
-                        new { refNo = paymentResponse.ReferenceNumber, examId });
-                }
-                else
-                {
-                    throw new Exception(paymentResponse.Error);
-                }
-            }
 
-            return RedirectToAction("ExamsDetails");
+                return RedirectToAction("UrgentScorePurchaseResult",
+                    new { refNo = paymentResponse.ReferenceNumber, examId });
+
+            }
+            else
+            {
+                throw new Exception(paymentResponse.Error);
+            }
         }
 
         public ActionResult UrgentScorePurchaseResult(string refNo, int examId)
@@ -203,7 +200,7 @@ namespace Mock3.Controllers
                 ReferenceNumber = refNo
             });
 
-            var viewModel = new UrgentScorePurchaseResultViewModel()
+            var viewModel = new PurchaseResultViewModel()
             {
                 ReferenceNumber = refNo
             };
