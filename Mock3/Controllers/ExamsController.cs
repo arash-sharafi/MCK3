@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNet.Identity;
 using Mock3.Core;
+using Mock3.Core.Enums;
 using Mock3.Core.Models;
+using Mock3.Core.OnlinePaymentService;
+using Mock3.Core.OnlinePaymentService.Contracts;
 using Mock3.Core.Utilities;
 using Mock3.Core.ViewModels;
 using System;
@@ -8,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using Mock3.Core.Enums;
 
 namespace Mock3.Controllers
 {
@@ -16,10 +18,14 @@ namespace Mock3.Controllers
     public class ExamsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        public ExamsController(IUnitOfWork unitOfWork)
+        private readonly IOnlinePayment _onlinePayment;
+        private const int UrgentScorePrice = 50000;
+        private const string SuccessfullyVerified = "SUCCESSFUL";
+        private const string AcceptedPayment = "ACCEPTED";
+        public ExamsController(IUnitOfWork unitOfWork, IOnlinePayment onlinePayment)
         {
             _unitOfWork = unitOfWork;
+            _onlinePayment = onlinePayment;
         }
         // GET: Exams
         public ActionResult Index()
@@ -62,9 +68,14 @@ namespace Mock3.Controllers
             if (usedVoucher == null)
                 throw new NullReferenceException();
 
+            var isVoucherExpired = Utilities.IsVoucherExpired(
+                Utilities.GetVoucherExpirationDate(usedVoucher.CreateDate, Utilities.VoucherValidationInMonth));
+
+            if (isVoucherExpired)
+                throw new InvalidOperationException();
 
 
-            var voucherIsUsedBefore = _unitOfWork.Vouchers.GetVoucherById(usedVoucher.Id);
+            var voucherIsUsedBefore = _unitOfWork.UserExams.GetUserExamByVoucherId(usedVoucher.Id);
 
             if (voucherIsUsedBefore != null)
                 throw new InvalidOperationException();
@@ -114,7 +125,7 @@ namespace Mock3.Controllers
 
 
             var userRegisteredExams = await _unitOfWork.UserExams
-                .GetUserExamsByUserId(currentUserId, withDependencies: false);
+                .GetUserExamsByUserId(currentUserId, withDependencies: true);
 
             var userExamsDetailsViewModel = new List<UserExamDetailsViewModel>();
 
@@ -156,24 +167,69 @@ namespace Mock3.Controllers
                 throw new InvalidOperationException();
             }
 
-            //Actual payments goes here
-            var paymentConfirmed = true;
+            var userDetails = _unitOfWork.Users.GetUserById(currentUserId);
 
-            if (paymentConfirmed)
+
+            var paymentResponse = _onlinePayment.Payment(new PaymentRequest()
+            {
+                Description = "خرید سرویس نمره دهی اضطراری",
+                PayerEmail = userDetails.Email,
+                PayerFullName = userDetails.FirstName + " " + userDetails.LastName,
+                PayerCellPhoneNumber = userDetails.CellPhoneNumber,
+                Price = UrgentScorePrice
+            });
+
+            if (paymentResponse.Status.Trim().Equals(AcceptedPayment))
             {
                 if (SubmitUrgentScore(userExam))
                 {
-                    TempData["Message"] = "درخواست نمره دهی اضطراری ثبت شده است.";
-                    return RedirectToAction("ExamsDetails");
+                    return RedirectToAction("UrgentScorePurchaseResult",
+                        new { refNo = paymentResponse.ReferenceNumber, examId });
                 }
                 else
                 {
-                    TempData["Message"] = "بروز خطا در ثبت نمره دهی اضطراری.";
-                    return RedirectToAction("ExamsDetails");
+                    throw new Exception(paymentResponse.Error);
                 }
             }
 
             return RedirectToAction("ExamsDetails");
+        }
+
+        public ActionResult UrgentScorePurchaseResult(string refNo, int examId)
+        {
+            var verifyPaymentResponse = _onlinePayment.VerifyPayment(new PaymentVerifyRequest()
+            {
+                Price = UrgentScorePrice,
+                ReferenceNumber = refNo
+            });
+
+            var viewModel = new UrgentScorePurchaseResultViewModel()
+            {
+                ReferenceNumber = refNo
+            };
+
+
+            if (verifyPaymentResponse.Status.Trim().Equals(SuccessfullyVerified))
+            {
+                string currentUserId = User.Identity.GetUserId();
+
+                var userExam = _unitOfWork.UserExams.GetUserExamByForeignKeys(currentUserId, examId);
+                if (userExam == null)
+                {
+                    throw new NullReferenceException();
+                }
+
+                SubmitUrgentScore(userExam);
+
+                viewModel.Message = verifyPaymentResponse.Message;
+                viewModel.AmountPaid = verifyPaymentResponse.AmountPaid.ToString();
+            }
+            else
+            {
+                viewModel.Error = verifyPaymentResponse.Error;
+            }
+
+            return View(viewModel);
         }
 
 
@@ -229,7 +285,7 @@ namespace Mock3.Controllers
             {
                 var invoice = new Invoice()
                 {
-                    Price = "40000",
+                    Price = UrgentScorePrice.ToString(),
                     Description = "خرید نمره دهی اضطراری برای آزمون " + exam.Description,
                     PurchaseTypeId = (int)PurchaseTypeEnum.BuyUrgentScore,
                     UserId = User.Identity.GetUserId()
@@ -338,5 +394,7 @@ namespace Mock3.Controllers
             else
                 return false;
         }
+
+
     }
 }

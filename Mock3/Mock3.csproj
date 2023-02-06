@@ -407,6 +407,7 @@
     <Content Include="Views\Vouchers\VouchersDetails.cshtml" />
     <Content Include="Views\Exams\ExamsDetails.cshtml" />
     <Content Include="Views\Vouchers\VoucherPurchaseResult.cshtml" />
+    <Content Include="Views\Exams\UrgentScorePurchaseResult.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

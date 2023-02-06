@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Mock3.Core.OnlinePaymentService;
+﻿using Mock3.Core.OnlinePaymentService;
 using Mock3.Core.OnlinePaymentService.Contracts;
 
 namespace Mock3.Infrastructure.Services.OnlinePayment
 {
     public class OnlinePayment:IOnlinePayment
     {
+        
+        
+        //THIS IS JUST FOR DEMO PURPOSES, ACTUAL IMPLEMENTATION IS DIFFERENT BASED ON THE BANK GATEWAY REQUIREMENTS.
+
+
+
         public PaymentResponse Payment(PaymentRequest request)
         {
             return new PaymentResponse()
