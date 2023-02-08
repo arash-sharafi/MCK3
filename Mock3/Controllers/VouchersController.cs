@@ -107,7 +107,7 @@ namespace Mock3.Controllers
 
             var userVouchersViewModel = new List<UserVoucherDetailsViewModel>();
 
-            var participatedExams = await _unitOfWork.UserExams
+            var participatedExams = await _unitOfWork.ExamsReservation
                 .GetUserExamsByUserId(currentUserId, withDependencies: true);
 
             foreach (var participatedExam in participatedExams)
@@ -164,7 +164,7 @@ namespace Mock3.Controllers
 
 
             //Check for connection to this voucher id and current user
-            var isVoucherConnectedToTheUser = _unitOfWork.UserExams
+            var isVoucherConnectedToTheUser = _unitOfWork.ExamsReservation
                 .GetUserExamByForeignKeys(voucherId, currentUserId);
 
             if (isVoucherConnectedToTheUser == null)
@@ -211,10 +211,10 @@ namespace Mock3.Controllers
         }
 
 
-        private int GetDayBeforeExamDay(UserExam isVoucherConnectedToTheUser)
+        private int GetDayBeforeExamDay(ExamReservation isVoucherConnectedToThe)
         {
             var examDate = Parse(_unitOfWork.Exams
-                .GetExamById(isVoucherConnectedToTheUser.ExamId)
+                .GetExamById(isVoucherConnectedToThe.ExamId)
                 .StartDate.Replace("/", string.Empty));
 
             var exYear = Parse(Convert.ToString(examDate).Substring(0, 4));
@@ -258,22 +258,22 @@ namespace Mock3.Controllers
         }
 
         private UserVoucherDetailsViewModel GetUserUsedVoucherDetailsViewModel(
-            UserExam participatedExam
+            ExamReservation participatedExamReservation
             , (VoucherStatus, string) voucherStatusDetails)
         {
             return new UserVoucherDetailsViewModel()
             {
-                ExamDate = participatedExam.Exam.StartDate,
-                ExamDesc = participatedExam.Exam.Description,
-                ExamId = participatedExam.ExamId,
-                VoucherId = participatedExam.VoucherId,
-                VoucherNo = participatedExam.Voucher.VoucherNo,
-                VoucherPurchaseDate = participatedExam.Voucher.CreateDate,
+                ExamDate = participatedExamReservation.Exam.StartDate,
+                ExamDesc = participatedExamReservation.Exam.Description,
+                ExamId = participatedExamReservation.ExamId,
+                VoucherId = participatedExamReservation.VoucherId,
+                VoucherNo = participatedExamReservation.Voucher.VoucherNo,
+                VoucherPurchaseDate = participatedExamReservation.Voucher.CreateDate,
                 VoucherExpirationDate = Utilities.GetVoucherExpirationDate(
-                    participatedExam.Voucher.CreateDate,
+                    participatedExamReservation.Voucher.CreateDate,
                     Utilities.VoucherValidationInMonth),
-                VoucherPurchaser = participatedExam.Voucher.User.FirstName
-                                   + " " + participatedExam.Voucher.User.LastName,
+                VoucherPurchaser = participatedExamReservation.Voucher.User.FirstName
+                                   + " " + participatedExamReservation.Voucher.User.LastName,
                 CurrentStatus = voucherStatusDetails.Item1,
                 CurrentStatusDesc = voucherStatusDetails.Item2
             };
@@ -301,7 +301,7 @@ namespace Mock3.Controllers
                 UserId = User.Identity.GetUserId()
             };
 
-            var registeredExam = _unitOfWork.UserExams.GetUserExamByVoucherId(voucher.Id);
+            var registeredExam = _unitOfWork.ExamsReservation.GetUserExamByVoucherId(voucher.Id);
 
             if (registeredExam == null)
             {
@@ -315,7 +315,7 @@ namespace Mock3.Controllers
             }
 
             _unitOfWork.Invoices.Add(invoice);
-            _unitOfWork.UserExams.Remove(registeredExam);
+            _unitOfWork.ExamsReservation.Remove(registeredExam);
 
             exam.RemainingCapacity += 1;
 

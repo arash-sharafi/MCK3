@@ -18,7 +18,7 @@ namespace Mock3.Core.Models
         [Required] 
         public int InvoiceId { get; set; }
         [Required] 
-        public int UserExamId { get; set; }
+        public int ExamReservationId { get; set; }
         [Required] 
         public int VoucherId { get; set; }
         [Required] 

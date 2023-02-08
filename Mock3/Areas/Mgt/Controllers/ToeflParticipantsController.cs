@@ -32,7 +32,7 @@ namespace Mock3.Areas.Mgt.Controllers
             if (selectedExam == null)
                 throw new NullReferenceException();
 
-            var participants = await _unitOfWork.UserExams
+            var participants = await _unitOfWork.ExamsReservation
                 .GetUserExamsByExamId(examId: id, withDependencies: true);
 
             var viewModel = new List<ParticipantMgtViewModel>();
@@ -65,7 +65,7 @@ namespace Mock3.Areas.Mgt.Controllers
                 return View(await GetExamTitleForParticipantViewModel(viewModel.UserExamId));
             }
 
-            var modifiedParticipantRecord = await _unitOfWork.UserExams
+            var modifiedParticipantRecord = await _unitOfWork.ExamsReservation
                 .GetUserExamById(viewModel.UserExamId, withDependencies: false);
 
             if (modifiedParticipantRecord == null)
@@ -94,7 +94,7 @@ namespace Mock3.Areas.Mgt.Controllers
                 return View(await GetSubmitScoresForParticipantViewModel(viewModel.UserExamId));
             }
 
-            var modifiedParticipantRecord = await _unitOfWork.UserExams
+            var modifiedParticipantRecord = await _unitOfWork.ExamsReservation
                 .GetUserExamById(viewModel.UserExamId, withDependencies: false);
 
             if (modifiedParticipantRecord == null)
@@ -119,7 +119,7 @@ namespace Mock3.Areas.Mgt.Controllers
 
         private async Task<SubmitScoresForParticipantViewModel> GetSubmitScoresForParticipantViewModel(int id)
         {
-            var participantExamRecord = await _unitOfWork.UserExams
+            var participantExamRecord = await _unitOfWork.ExamsReservation
                 .GetUserExamById(userExamId: id, withDependencies: true);
 
             if (participantExamRecord == null)
@@ -144,7 +144,7 @@ namespace Mock3.Areas.Mgt.Controllers
 
         private async Task<SetExamTitleForParticipantViewModel> GetExamTitleForParticipantViewModel(int id)
         {
-            var participantExamRecord = await _unitOfWork.UserExams
+            var participantExamRecord = await _unitOfWork.ExamsReservation
                 .GetUserExamById(userExamId: id, withDependencies: true);
 
 
@@ -167,7 +167,7 @@ namespace Mock3.Areas.Mgt.Controllers
             };
         }
 
-        private static ParticipantMgtViewModel GetParticipantMgtViewModel(UserExam participant)
+        private static ParticipantMgtViewModel GetParticipantMgtViewModel(ExamReservation participant)
         {
             return new ParticipantMgtViewModel
             {

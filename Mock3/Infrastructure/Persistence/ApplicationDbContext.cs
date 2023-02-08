@@ -1,6 +1,6 @@
-﻿using System.Data.Entity;
-using Microsoft.AspNet.Identity.EntityFramework;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
 using Mock3.Core.Models;
+using System.Data.Entity;
 
 namespace Mock3.Infrastructure.Persistence
 {
@@ -9,7 +9,7 @@ namespace Mock3.Infrastructure.Persistence
 
         public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<Exam> Exams { get; set; }
-        public DbSet<UserExam> UserExams { get; set; }
+        public DbSet<ExamReservation> ExamReservations { get; set; }
         public DbSet<ExamTitle> ExamTitles { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<PurchaseType> PurchaseTypes { get; set; }

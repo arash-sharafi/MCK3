@@ -75,7 +75,7 @@ namespace Mock3.Controllers
                 throw new InvalidOperationException();
 
 
-            var voucherIsUsedBefore = _unitOfWork.UserExams.GetUserExamByVoucherId(usedVoucher.Id);
+            var voucherIsUsedBefore = _unitOfWork.ExamsReservation.GetUserExamByVoucherId(usedVoucher.Id);
 
             if (voucherIsUsedBefore != null)
                 throw new InvalidOperationException();
@@ -83,7 +83,7 @@ namespace Mock3.Controllers
 
 
 
-            var userRegisteredBefore = _unitOfWork.UserExams
+            var userRegisteredBefore = _unitOfWork.ExamsReservation
                 .GetUserExamByForeignKeys(currentUserId, examId, usedVoucher.Id);
 
             if (userRegisteredBefore != null)
@@ -92,14 +92,14 @@ namespace Mock3.Controllers
 
 
             var examParticipantsCounter = 0;
-            if (_unitOfWork.UserExams.Any())
+            if (_unitOfWork.ExamsReservation.Any())
             {
-                examParticipantsCounter = (await _unitOfWork.UserExams
+                examParticipantsCounter = (await _unitOfWork.ExamsReservation
                     .GetUserExamsByExamId(examId, withDependencies: false))
                     .Count();
             }
 
-            var newUserExam = new UserExam
+            var newUserExam = new ExamReservation
             {
                 ExamId = examId,
                 UserId = currentUserId,
@@ -107,7 +107,7 @@ namespace Mock3.Controllers
                 ChairNo = (byte)++examParticipantsCounter
             };
 
-            _unitOfWork.UserExams.Add(newUserExam);
+            _unitOfWork.ExamsReservation.Add(newUserExam);
 
             var registeredExam = _unitOfWork.Exams.GetExamById(examId);
             if (registeredExam != null)
@@ -124,7 +124,7 @@ namespace Mock3.Controllers
             var currentUserId = User.Identity.GetUserId();
 
 
-            var userRegisteredExams = await _unitOfWork.UserExams
+            var userRegisteredExams = await _unitOfWork.ExamsReservation
                 .GetUserExamsByUserId(currentUserId, withDependencies: true);
 
             var userExamsDetailsViewModel = new List<UserExamDetailsViewModel>();
@@ -153,7 +153,7 @@ namespace Mock3.Controllers
 
             string currentUserId = User.Identity.GetUserId();
 
-            var userExam = _unitOfWork.UserExams.GetUserExamByForeignKeys(currentUserId, examId);
+            var userExam = _unitOfWork.ExamsReservation.GetUserExamByForeignKeys(currentUserId, examId);
             if (userExam == null)
             {
                 throw new NullReferenceException();
@@ -210,7 +210,7 @@ namespace Mock3.Controllers
             {
                 string currentUserId = User.Identity.GetUserId();
 
-                var userExam = _unitOfWork.UserExams.GetUserExamByForeignKeys(currentUserId, examId);
+                var userExam = _unitOfWork.ExamsReservation.GetUserExamByForeignKeys(currentUserId, examId);
                 if (userExam == null)
                 {
                     throw new NullReferenceException();
@@ -247,21 +247,21 @@ namespace Mock3.Controllers
         }
 
         private UserExamDetailsViewModel GetExamDetailsViewModel(
-            UserExam regExam, (UrgentScoreStatus Status, string StatusDetails) urgentScoreStatus)
+            ExamReservation regExamReservation, (UrgentScoreStatus Status, string StatusDetails) urgentScoreStatus)
         {
             return new UserExamDetailsViewModel()
             {
-                ExamDate = regExam.Exam.StartDate,
-                ExamDesc = regExam.Exam.Description,
-                ExamName = regExam.Exam.Name,
-                ExamId = regExam.ExamId,
-                ListeningScore = regExam.ListeningScore,
-                ReadingScore = regExam.ReadingScore,
-                SpeakingScore = regExam.SpeakingScore,
-                WritingScore = regExam.WritingScore,
-                ScoredDate = regExam.ScoreSubmitDate,
-                TotalScore = TotalScore(participatedExam: regExam),
-                VoucherNo = regExam.Voucher.VoucherNo,
+                ExamDate = regExamReservation.Exam.StartDate,
+                ExamDesc = regExamReservation.Exam.Description,
+                ExamName = regExamReservation.Exam.Name,
+                ExamId = regExamReservation.ExamId,
+                ListeningScore = regExamReservation.ListeningScore,
+                ReadingScore = regExamReservation.ReadingScore,
+                SpeakingScore = regExamReservation.SpeakingScore,
+                WritingScore = regExamReservation.WritingScore,
+                ScoredDate = regExamReservation.ScoreSubmitDate,
+                TotalScore = TotalScore(participatedExamReservation: regExamReservation),
+                VoucherNo = regExamReservation.Voucher.VoucherNo,
                 UrgentScoreStatus = urgentScoreStatus.Status,
                 UrgentScoreDetails = urgentScoreStatus.StatusDetails
             };
@@ -269,10 +269,10 @@ namespace Mock3.Controllers
 
 
 
-        private bool SubmitUrgentScore(UserExam registeredExam)
+        private bool SubmitUrgentScore(ExamReservation registeredExamReservation)
         {
 
-            var exam = _unitOfWork.Exams.GetExamById(registeredExam.ExamId);
+            var exam = _unitOfWork.Exams.GetExamById(registeredExamReservation.ExamId);
             if (exam == null)
             {
                 return false;
@@ -294,10 +294,10 @@ namespace Mock3.Controllers
                 UrgentScore newUSRequest = new UrgentScore()
                 {
                     InvoiceId = invoice.Id,
-                    UserExamId = registeredExam.Id,
+                    ExamReservationId = registeredExamReservation.Id,
                     Status = (int)UrgentScoreStatus.Submitted,
                     SubmitDate = Utilities.Today().StringValue,
-                    VoucherId = registeredExam.VoucherId,
+                    VoucherId = registeredExamReservation.VoucherId,
                     UserId = User.Identity.GetUserId()
                 };
 
@@ -313,13 +313,13 @@ namespace Mock3.Controllers
 
         }
 
-        private (UrgentScoreStatus Status, string StatusDetails) GetUrgentScoreStatus(UserExam registeredExam)
+        private (UrgentScoreStatus Status, string StatusDetails) GetUrgentScoreStatus(ExamReservation registeredExamReservation)
         {
             int today = Utilities.Today().IntigerValue;
-            int examDate = Convert.ToInt32(registeredExam.Exam.StartDate.Replace("/", ""));
+            int examDate = Convert.ToInt32(registeredExamReservation.Exam.StartDate.Replace("/", ""));
 
             var submittedUrgentScoreRequest = _unitOfWork.UrgentScores
-                .GetUrgentScoreByUserExamId(registeredExam.Id);
+                .GetUrgentScoreByUserExamId(registeredExamReservation.Id);
 
             if (submittedUrgentScoreRequest == null)
             {
@@ -358,12 +358,12 @@ namespace Mock3.Controllers
             }
         }
 
-        private double TotalScore(UserExam participatedExam)
+        private double TotalScore(ExamReservation participatedExamReservation)
         {
-            return participatedExam.ListeningScore
-                   + participatedExam.ReadingScore
-                   + participatedExam.SpeakingScore
-                   + participatedExam.WritingScore;
+            return participatedExamReservation.ListeningScore
+                   + participatedExamReservation.ReadingScore
+                   + participatedExamReservation.SpeakingScore
+                   + participatedExamReservation.WritingScore;
         }
 
         private string ExamRegisterStatus(Exam exam)
@@ -383,7 +383,7 @@ namespace Mock3.Controllers
         {
             var currentUserId = User.Identity.GetUserId();
 
-            var userExamRecord = _unitOfWork.UserExams
+            var userExamRecord = _unitOfWork.ExamsReservation
                 .GetUserExamByForeignKeys(currentUserId, exam.Id);
 
             if (userExamRecord != null)

@@ -18,7 +18,7 @@ namespace Mock3.Infrastructure.Persistence.Repositories
         public UrgentScore GetUrgentScoreByUserExamId(int userExamId)
         {
             return _context.UrgentScores
-                .FirstOrDefault(x => x.UserExamId == userExamId);
+                .FirstOrDefault(x => x.ExamReservationId == userExamId);
         }
 
         public IEnumerable<UrgentScore> GetSubmittedUrgentScores()

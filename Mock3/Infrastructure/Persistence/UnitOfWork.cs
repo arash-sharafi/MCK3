@@ -9,7 +9,7 @@ namespace Mock3.Infrastructure.Persistence
         private readonly ApplicationDbContext _context;
 
         public IExamRepository Exams { get; private set; }
-        public IUserExamRepository UserExams { get; private set; }
+        public IExamReservationRepository ExamsReservation { get; private set; }
         public IVoucherRepository Vouchers { get; private set; }
         public IInvoiceRepository Invoices { get; private set; }
         public IUrgentScoreRepository UrgentScores { get; private set; }
@@ -20,7 +20,7 @@ namespace Mock3.Infrastructure.Persistence
         {
             _context = context;
             Exams = new ExamRepository(context);
-            UserExams = new UserExamRepository(context);
+            ExamsReservation = new ExamReservationRepository(context);
             Vouchers = new VoucherRepository(context);
             Invoices = new InvoiceRepository(context);
             UrgentScores = new UrgentScoreRepository(context);

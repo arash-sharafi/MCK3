@@ -7,81 +7,81 @@ using Mock3.Core.Repositories;
 
 namespace Mock3.Infrastructure.Persistence.Repositories
 {
-    public class UserExamRepository : IUserExamRepository
+    public class ExamReservationRepository : IExamReservationRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public UserExamRepository(ApplicationDbContext context)
+        public ExamReservationRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public UserExam GetUserExamByForeignKeys(string userId, int examId, int voucherId)
+        public ExamReservation GetUserExamByForeignKeys(string userId, int examId, int voucherId)
         {
-            return _context.UserExams
+            return _context.ExamReservations
                 .FirstOrDefault(x => x.UserId == userId
                                      && x.ExamId == examId
                                      && x.VoucherId == voucherId);
         }
 
-        public UserExam GetUserExamByForeignKeys(string userId, int examId)
+        public ExamReservation GetUserExamByForeignKeys(string userId, int examId)
         {
-            return _context.UserExams
+            return _context.ExamReservations
                 .FirstOrDefault(x => x.UserId == userId
                                      && x.ExamId == examId);
         }
 
-        public UserExam GetUserExamByForeignKeys(int voucherId, string userId)
+        public ExamReservation GetUserExamByForeignKeys(int voucherId, string userId)
         {
-            return _context.UserExams
+            return _context.ExamReservations
                 .FirstOrDefault(
                     x => x.UserId == userId
                     && x.VoucherId == voucherId);
         }
 
-        public UserExam GetUserExamByVoucherId(int voucherId)
+        public ExamReservation GetUserExamByVoucherId(int voucherId)
         {
-            return _context.UserExams.FirstOrDefault(x => x.VoucherId == voucherId);
+            return _context.ExamReservations.FirstOrDefault(x => x.VoucherId == voucherId);
         }
         public bool Any()
         {
-            return _context.UserExams.Any();
+            return _context.ExamReservations.Any();
         }
 
 
 
-        public async Task<IEnumerable<UserExam>> GetUserExamsByExamId(int examId, bool withDependencies)
+        public async Task<IEnumerable<ExamReservation>> GetUserExamsByExamId(int examId, bool withDependencies)
         {
             return withDependencies
-                ? await _context.UserExams
+                ? await _context.ExamReservations
                     .Where(x => x.ExamId == examId)
                     .Include(x => x.User)
                     .Include(x => x.Exam)
                     .Include(x => x.ExamTitle)
                     .Include(x => x.Voucher).ToListAsync()
-                : await _context.UserExams
+                : await _context.ExamReservations
                     .Where(x => x.ExamId == examId).ToListAsync();
         }
 
 
-        public async Task<IEnumerable<UserExam>> GetUserExamsByUserId(string userId, bool withDependencies)
+        public async Task<IEnumerable<ExamReservation>> GetUserExamsByUserId(string userId, bool withDependencies)
         {
             return withDependencies
-                ? await _context.UserExams
+                ? await _context.ExamReservations
                     .Where(x => x.UserId == userId)
                     .Include(x => x.User)
                     .Include(x => x.Exam)
                     .Include(x => x.ExamTitle)
                     .Include(x => x.Voucher).ToListAsync()
-                : await _context.UserExams
+                : await _context.ExamReservations
                     .Where(x => x.UserId == userId).ToListAsync();
         }
 
-        public async Task<UserExam> GetUserExamById(int userExamId, bool withDependencies)
+        public async Task<ExamReservation> GetUserExamById(int userExamId, bool withDependencies)
         {
             return !withDependencies
-                ? await _context.UserExams.FirstOrDefaultAsync(x => x.Id == userExamId)
-                : await _context.UserExams
+                ? await _context.ExamReservations.FirstOrDefaultAsync(x => x.Id == userExamId)
+                : await _context.ExamReservations
                     .Include(x => x.User)
                     .Include(x => x.Exam)
                     .Include(x => x.Voucher)
@@ -90,14 +90,14 @@ namespace Mock3.Infrastructure.Persistence.Repositories
         }
 
 
-        public void Add(UserExam userExam)
+        public void Add(ExamReservation examReservation)
         {
-            _context.UserExams.Add(userExam);
+            _context.ExamReservations.Add(examReservation);
         }
 
-        public void Remove(UserExam userExam)
+        public void Remove(ExamReservation examReservation)
         {
-            _context.UserExams.Remove(userExam);
+            _context.ExamReservations.Remove(examReservation);
         }
     }
 }

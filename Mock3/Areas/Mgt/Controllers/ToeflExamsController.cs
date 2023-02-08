@@ -171,8 +171,8 @@ namespace Mock3.Areas.Mgt.Controllers
 
             foreach (var urgentScore in urgentScoreRequests)
             {
-                var registeredExamRecord = await _unitOfWork.UserExams
-                    .GetUserExamById(userExamId: urgentScore.UserExamId, withDependencies: true);
+                var registeredExamRecord = await _unitOfWork.ExamsReservation
+                    .GetUserExamById(userExamId: urgentScore.ExamReservationId, withDependencies: true);
 
                 if (registeredExamRecord == null)
                 {
@@ -186,20 +186,20 @@ namespace Mock3.Areas.Mgt.Controllers
         }
 
         private static UrgentScoreMgtViewModel GetUrgentScoreMgtViewModel(
-            UserExam registeredExamRecord, UrgentScore urgentScore)
+            ExamReservation registeredExamReservationRecord, UrgentScore urgentScore)
         {
             return new UrgentScoreMgtViewModel()
             {
-                ExamId = registeredExamRecord.ExamId,
-                CellPhoneNo = registeredExamRecord.User.CellPhoneNumber,
-                ExamDesc = registeredExamRecord.Exam.Description,
-                FullName = registeredExamRecord.User.FirstName + " " + registeredExamRecord.User.LastName,
-                NationalCode = registeredExamRecord.User.NationalCode,
-                StartDate = registeredExamRecord.Exam.StartDate,
-                UserId = registeredExamRecord.UserId,
-                VoucherNo = registeredExamRecord.Voucher.VoucherNo,
+                ExamId = registeredExamReservationRecord.ExamId,
+                CellPhoneNo = registeredExamReservationRecord.User.CellPhoneNumber,
+                ExamDesc = registeredExamReservationRecord.Exam.Description,
+                FullName = registeredExamReservationRecord.User.FirstName + " " + registeredExamReservationRecord.User.LastName,
+                NationalCode = registeredExamReservationRecord.User.NationalCode,
+                StartDate = registeredExamReservationRecord.Exam.StartDate,
+                UserId = registeredExamReservationRecord.UserId,
+                VoucherNo = registeredExamReservationRecord.Voucher.VoucherNo,
                 UrgentScoreSubmitDate = urgentScore.SubmitDate,
-                UserExamId = registeredExamRecord.Id,
+                UserExamId = registeredExamReservationRecord.Id,
                 UrgentScoreStatus = (UrgentScoreStatus)urgentScore.Status
             };
         }

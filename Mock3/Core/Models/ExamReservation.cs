@@ -2,7 +2,7 @@
 
 namespace Mock3.Core.Models
 {
-    public class UserExam
+    public class ExamReservation
     {
         public int Id { get; set; }
 

@@ -196,6 +196,10 @@
     <Compile Include="Core\Repositories\IUserRepository.cs" />
     <Compile Include="Core\ViewModels\PurchaseResultViewModel.cs" />
     <Compile Include="Core\ViewModels\VoucherPurchaseResultViewModel.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202302081833500_Rename_UserExam_table_to_ExamReservation.cs" />
+    <Compile Include="Infrastructure\Persistence\Migrations\202302081833500_Rename_UserExam_table_to_ExamReservation.Designer.cs">
+      <DependentUpon>202302081833500_Rename_UserExam_table_to_ExamReservation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Infrastructure\Services\OnlinePayment\OnlinePayment.cs" />
     <Compile Include="Infrastructure\Persistence\Repositories\UserRepository.cs" />
     <Compile Include="Core\ViewModels\Admin\ExamTitleMgtViewModel.cs" />
@@ -287,10 +291,10 @@
     <Compile Include="Core\Repositories\IInvoiceRepository.cs" />
     <Compile Include="Infrastructure\Persistence\Repositories\InvoiceRepository.cs" />
     <Compile Include="Core\Repositories\IUrgentScoreRepository.cs" />
-    <Compile Include="Core\Repositories\IUserExamRepository.cs" />
+    <Compile Include="Core\Repositories\IExamReservationRepository.cs" />
     <Compile Include="Core\Repositories\IVoucherRepository.cs" />
     <Compile Include="Infrastructure\Persistence\Repositories\UrgentScoreRepository.cs" />
-    <Compile Include="Infrastructure\Persistence\Repositories\UserExamRepository.cs" />
+    <Compile Include="Infrastructure\Persistence\Repositories\ExamReservationRepository.cs" />
     <Compile Include="Infrastructure\Persistence\Repositories\VoucherRepository.cs" />
     <Compile Include="Core\ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="Infrastructure\Persistence\ApplicationDbContext.cs" />
@@ -298,7 +302,7 @@
     <Compile Include="Core\Models\Exam.cs" />
     <Compile Include="Core\ViewModels\ExternalLoginConfirmationViewModel.cs" />
     <Compile Include="Core\ViewModels\ManageViewModels.cs" />
-    <Compile Include="Core\Models\UserExam.cs" />
+    <Compile Include="Core\Models\ExamReservation.cs" />
     <Compile Include="Core\Models\Voucher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -464,6 +468,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202301222329319_CreateUrgentScoresTable.resx">
       <DependentUpon>202301222329319_CreateUrgentScoresTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Infrastructure\Persistence\Migrations\202302081833500_Rename_UserExam_table_to_ExamReservation.resx">
+      <DependentUpon>202302081833500_Rename_UserExam_table_to_ExamReservation.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
