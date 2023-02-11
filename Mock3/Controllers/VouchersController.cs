@@ -282,25 +282,15 @@ namespace Mock3.Controllers
 
         private Voucher AddNewVoucher(string currentUserId)
         {
-            return new Voucher
-            {
-                CreateDate = Utilities.Today().StringValue,
-                UserId = currentUserId,
-                VoucherNo = GenerateNewVoucher(),
-            };
+            return Voucher.Create(
+                voucherNo: GenerateNewVoucher(),
+                buyerId: currentUserId,
+                createDate: Utilities.Today().StringValue);
         }
 
 
         private bool ReleaseVoucher(Voucher voucher)
         {
-            var invoice = new Invoice()
-            {
-                Price = ReleaseVoucherPrice.ToString(),
-                Description = "آزادسازی ووچر آزمون آزمایشی تافل به شماره " + voucher.VoucherNo,
-                PurchaseTypeId = (int)PurchaseTypeEnum.ReleaseVoucher,
-                UserId = User.Identity.GetUserId()
-            };
-
             var registeredExam = _unitOfWork.ExamsReservation.GetUserExamByVoucherId(voucher.Id);
 
             if (registeredExam == null)
@@ -314,10 +304,16 @@ namespace Mock3.Controllers
                 return false;
             }
 
-            _unitOfWork.Invoices.Add(invoice);
+
+            _unitOfWork.Invoices.Add(Invoice.Create(
+                price: ReleaseVoucherPrice.ToString(),
+                description: "آزادسازی ووچر آزمون آزمایشی تافل به شماره " + voucher.VoucherNo,
+                purchaseTypeId: (int)PurchaseTypeEnum.ReleaseVoucher,
+                buyerId: User.Identity.GetUserId()));
+
             _unitOfWork.ExamsReservation.Remove(registeredExam);
 
-            exam.RemainingCapacity += 1;
+            exam.FreeSeat();
 
             _unitOfWork.Complete();
 

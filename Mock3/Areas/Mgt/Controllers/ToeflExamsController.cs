@@ -1,12 +1,12 @@
 ﻿using Mock3.Core;
+using Mock3.Core.Enums;
 using Mock3.Core.Models;
+using Mock3.Core.ViewModels.Admin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using Mock3.Core.Enums;
-using Mock3.Core.ViewModels.Admin;
 
 namespace Mock3.Areas.Mgt.Controllers
 {
@@ -41,15 +41,12 @@ namespace Mock3.Areas.Mgt.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            _unitOfWork.Exams.Add(new Exam
-            {
-                Name = model.Name,
-                StartDate = model.StartDate,
-                Capacity = model.Capacity,
-                RemainingCapacity = model.Capacity,
-                Description = model.Description,
-                IsOpen = true
-            });
+            _unitOfWork.Exams.Add(Exam.Create(
+                model.Name,
+                model.StartDate,
+                model.Description,
+                model.Capacity,
+                isOpen: true));
 
             _unitOfWork.Complete();
 
@@ -88,10 +85,7 @@ namespace Mock3.Areas.Mgt.Controllers
 
             if (exam == null) return RedirectToAction("Index");
 
-            exam.Name = model.Name;
-            exam.Capacity = model.Capacity;
-            exam.Description = model.Description;
-            exam.StartDate = model.StartDate;
+            exam.Update(model.Name, model.StartDate, model.Description, model.Capacity);
 
             _unitOfWork.Complete();
 
@@ -125,7 +119,7 @@ namespace Mock3.Areas.Mgt.Controllers
 
             if (exam.IsOpen)
             {
-                exam.IsOpen = false;
+                exam.CloseRegistration();
                 _unitOfWork.Complete();
             }
 
@@ -144,7 +138,7 @@ namespace Mock3.Areas.Mgt.Controllers
 
             if (!exam.IsOpen)
             {
-                exam.IsOpen = true;
+                exam.OpenRegistration();
                 _unitOfWork.Complete();
             }
 

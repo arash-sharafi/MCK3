@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Web.Mvc;
-using Mock3.Core;
+﻿using Mock3.Core;
 using Mock3.Core.Models;
 using Mock3.Core.ViewModels.Admin;
+using System;
+using System.Web.Mvc;
 
 namespace Mock3.Areas.Mgt.Controllers
 {
@@ -35,10 +34,7 @@ namespace Mock3.Areas.Mgt.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            _unitOfWork.ExamTitles.Add(new ExamTitle
-            {
-                Title = model.Title
-            });
+            _unitOfWork.ExamTitles.Add(ExamTitle.Create(model.Title));
 
             _unitOfWork.Complete();
 
@@ -74,7 +70,7 @@ namespace Mock3.Areas.Mgt.Controllers
             if (examTitle == null)
                 throw new NullReferenceException();
 
-            examTitle.Title = model.Title;
+            examTitle.Update(model.Title);
 
             _unitOfWork.Complete();
 

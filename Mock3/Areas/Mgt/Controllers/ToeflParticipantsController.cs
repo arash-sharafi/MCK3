@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using Mock3.Core;
-using Mock3.Core.Enums;
+﻿using Mock3.Core;
 using Mock3.Core.Models;
 using Mock3.Core.Utilities;
 using Mock3.Core.ViewModels.Admin;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace Mock3.Areas.Mgt.Controllers
 {
@@ -42,10 +38,7 @@ namespace Mock3.Areas.Mgt.Controllers
                 viewModel.Add(GetParticipantMgtViewModel(participant));
             }
 
-
             return View(viewModel);
-
-
         }
 
 
@@ -58,24 +51,24 @@ namespace Mock3.Areas.Mgt.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SetExamTitle(SetExamTitleForParticipantViewModel viewModel)
+        public async Task<ActionResult> SetExamTitle(SetExamTitleForParticipantViewModel request)
         {
             if (!ModelState.IsValid)
             {
-                return View(await GetExamTitleForParticipantViewModel(viewModel.UserExamId));
+                return View(await GetExamTitleForParticipantViewModel(request.UserExamId));
             }
 
-            var modifiedParticipantRecord = await _unitOfWork.ExamsReservation
-                .GetUserExamById(viewModel.UserExamId, withDependencies: false);
+            var examReservation = await _unitOfWork.ExamsReservation
+                .GetUserExamById(request.UserExamId, withDependencies: false);
 
-            if (modifiedParticipantRecord == null)
+            if (examReservation == null)
                 throw new NullReferenceException();
 
+            examReservation.SetExamTitle(request.ExamTitleId);
 
-            modifiedParticipantRecord.ExamTitleId = viewModel.ExamTitleId;
             _unitOfWork.Complete();
 
-            return RedirectToAction("Index", new { id = viewModel.ExamId });
+            return RedirectToAction("Index", new { id = request.ExamId });
         }
 
 
@@ -87,34 +80,34 @@ namespace Mock3.Areas.Mgt.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SubmitScores(SubmitScoresForParticipantViewModel viewModel)
+        public async Task<ActionResult> SubmitScores(SubmitScoresForParticipantViewModel request)
         {
             if (!ModelState.IsValid)
             {
-                return View(await GetSubmitScoresForParticipantViewModel(viewModel.UserExamId));
+                return View(await GetSubmitScoresForParticipantViewModel(request.UserExamId));
             }
 
-            var modifiedParticipantRecord = await _unitOfWork.ExamsReservation
-                .GetUserExamById(viewModel.UserExamId, withDependencies: false);
+            var examReservation = await _unitOfWork.ExamsReservation
+                .GetUserExamById(request.UserExamId, withDependencies: false);
 
-            if (modifiedParticipantRecord == null)
+            if (examReservation == null)
                 throw new NullReferenceException();
 
             var requestedUrgentScore = _unitOfWork.UrgentScores
-                .GetUrgentScoreByUserExamId(userExamId: modifiedParticipantRecord.Id);
+                .GetUrgentScoreByUserExamId(userExamId: examReservation.Id);
 
-            if (requestedUrgentScore != null)
-                requestedUrgentScore.Status = (int)UrgentScoreStatus.Done;
+            requestedUrgentScore?.MarkAsDone();
 
-            modifiedParticipantRecord.ReadingScore = viewModel.ReadingScore;
-            modifiedParticipantRecord.ListeningScore = viewModel.ListeningScore;
-            modifiedParticipantRecord.SpeakingScore = viewModel.SpeakingScore;
-            modifiedParticipantRecord.WritingScore = viewModel.WritingScore;
-            modifiedParticipantRecord.ScoreSubmitDate = Utilities.Today().StringValue;
+            examReservation.SubmitScores(
+                request.ReadingScore,
+                request.ListeningScore,
+                request.SpeakingScore,
+                request.WritingScore,
+                Utilities.Today().StringValue);
 
             _unitOfWork.Complete();
 
-            return RedirectToAction("Index", new { id = viewModel.ExamId });
+            return RedirectToAction("Index", new { id = request.ExamId });
         }
 
         private async Task<SubmitScoresForParticipantViewModel> GetSubmitScoresForParticipantViewModel(int id)

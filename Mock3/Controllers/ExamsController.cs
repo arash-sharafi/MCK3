@@ -62,7 +62,6 @@ namespace Mock3.Controllers
             var currentUserId = User.Identity.GetUserId();
 
 
-
             var usedVoucher = _unitOfWork.Vouchers.GetVoucherByVoucherNumber(model.VoucherNo);
 
             if (usedVoucher == null)
@@ -81,8 +80,6 @@ namespace Mock3.Controllers
                 throw new InvalidOperationException();
 
 
-
-
             var userRegisteredBefore = _unitOfWork.ExamsReservation
                 .GetUserExamByForeignKeys(currentUserId, examId, usedVoucher.Id);
 
@@ -95,23 +92,22 @@ namespace Mock3.Controllers
             if (_unitOfWork.ExamsReservation.Any())
             {
                 examParticipantsCounter = (await _unitOfWork.ExamsReservation
-                    .GetUserExamsByExamId(examId, withDependencies: false))
+                        .GetUserExamsByExamId(examId, withDependencies: false))
                     .Count();
             }
 
-            var newUserExam = new ExamReservation
-            {
-                ExamId = examId,
-                UserId = currentUserId,
-                VoucherId = usedVoucher.Id,
-                ChairNo = (byte)++examParticipantsCounter
-            };
+            var examReservation = ExamReservation.Create(
+                currentUserId,
+                examId,
+                usedVoucher.Id,
+                (byte)++examParticipantsCounter);
 
-            _unitOfWork.ExamsReservation.Add(newUserExam);
+
+            _unitOfWork.ExamsReservation.Add(examReservation);
 
             var registeredExam = _unitOfWork.Exams.GetExamById(examId);
-            if (registeredExam != null)
-                registeredExam.RemainingCapacity -= 1;
+
+            registeredExam?.ReserveSeat();
 
             _unitOfWork.Complete();
 
@@ -153,8 +149,8 @@ namespace Mock3.Controllers
 
             string currentUserId = User.Identity.GetUserId();
 
-            var userExam = _unitOfWork.ExamsReservation.GetUserExamByForeignKeys(currentUserId, examId);
-            if (userExam == null)
+            var examReservation = _unitOfWork.ExamsReservation.GetUserExamByForeignKeys(currentUserId, examId);
+            if (examReservation == null)
             {
                 throw new NullReferenceException();
             }
@@ -280,28 +276,25 @@ namespace Mock3.Controllers
 
             try
             {
-                var invoice = new Invoice()
-                {
-                    Price = UrgentScorePrice.ToString(),
-                    Description = "خرید نمره دهی اضطراری برای آزمون " + exam.Description,
-                    PurchaseTypeId = (int)PurchaseTypeEnum.BuyUrgentScore,
-                    UserId = User.Identity.GetUserId()
-                };
+                var invoice = Invoice.Create(
+                    price: UrgentScorePrice.ToString(),
+                    description: "خرید نمره دهی اضطراری برای آزمون " + exam.Description,
+                    purchaseTypeId: (int)PurchaseTypeEnum.BuyUrgentScore,
+                    buyerId: User.Identity.GetUserId());
 
                 _unitOfWork.Invoices.Add(invoice);
                 _unitOfWork.Complete();
 
-                UrgentScore newUSRequest = new UrgentScore()
-                {
-                    InvoiceId = invoice.Id,
-                    ExamReservationId = registeredExamReservation.Id,
-                    Status = (int)UrgentScoreStatus.Submitted,
-                    SubmitDate = Utilities.Today().StringValue,
-                    VoucherId = registeredExamReservation.VoucherId,
-                    UserId = User.Identity.GetUserId()
-                };
+                _unitOfWork.UrgentScores.Add(
+                    Core.Models.UrgentScore.Create(
+                    status: (int)UrgentScoreStatus.Submitted,
+                    submitDate: Utilities.Today().StringValue,
+                    invoiceId: invoice.Id,
+                    examReservationId: registeredExamReservation.Id,
+                    voucherId: registeredExamReservation.VoucherId,
+                    participantId: User.Identity.GetUserId()
+                    ));
 
-                _unitOfWork.UrgentScores.Add(newUSRequest);
                 _unitOfWork.Complete();
 
                 return true;
