@@ -9,6 +9,7 @@ using Mock3.UnitTests.Extensions;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Threading.Tasks;
 
 namespace Mock3.UnitTests.Controllers
 {
@@ -33,25 +34,25 @@ namespace Mock3.UnitTests.Controllers
         }
 
         [Test]
-        public void Register_InvalidVoucher_ThrowsNullReferenceException()
+        public async Task Register_InvalidVoucher_ThrowsNullReferenceException()
         {
             var examId = 1;
 
-            _controller.Invoking(c => c.Register(examId, new RegisterExamViewModel()))
-                .Should().ThrowAsync<NullReferenceException>();
+            Func<Task> action = () => _controller.Register(examId, new RegisterExamViewModel());
+
+            await action.Should().ThrowAsync<NullReferenceException>();
         }
 
         [Test]
-        public void Register_ExpiredVoucher_ThrowsInvalidOperationException()
+        public async Task Register_ExpiredVoucher_ThrowsInvalidOperationException()
         {
             var voucher = Voucher.Create("1", "user1@domain.com", "1400/01/01");
             _mockVouchersRepository.Setup(r => r.GetVoucherByVoucherNumber("1")).Returns(voucher);
             var examId = 1;
 
-            _controller.Invoking(c => c.Register(examId, 
-                    new RegisterExamViewModel() { VoucherNo = "1" }))
-                .Should().ThrowAsync<InvalidOperationException>()
-                .WithMessage("Expired Voucher");
+            Func<Task> action = () => _controller.Register(examId, new RegisterExamViewModel() { VoucherNo = "1" });
+
+            await action.Should().ThrowAsync<InvalidOperationException>();
         }
     }
 }

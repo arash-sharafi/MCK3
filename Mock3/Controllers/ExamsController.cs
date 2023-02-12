@@ -68,25 +68,8 @@ namespace Mock3.Controllers
             if (usedVoucher == null)
                 throw new NullReferenceException();
 
-            var isVoucherExpired = Utilities.IsVoucherExpired(
-                Utilities.GetVoucherExpirationDate(usedVoucher.CreateDate, Utilities.VoucherValidationInMonth));
-
-            if (isVoucherExpired)
+            if (!IsVoucherValid(usedVoucher, currentUserId, examId))
                 throw new InvalidOperationException();
-
-
-            var voucherIsUsedBefore = _unitOfWork.ExamsReservation.GetUserExamByVoucherId(usedVoucher.Id);
-
-            if (voucherIsUsedBefore != null)
-                throw new InvalidOperationException();
-
-
-            var userRegisteredBefore = _unitOfWork.ExamsReservation
-                .GetUserExamByForeignKeys(currentUserId, examId, usedVoucher.Id);
-
-            if (userRegisteredBefore != null)
-                throw new InvalidOperationException();
-
 
 
             var examParticipantsCounter = 0;
@@ -114,6 +97,7 @@ namespace Mock3.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
 
 
         public async Task<ActionResult> ExamsDetails()
@@ -224,6 +208,30 @@ namespace Mock3.Controllers
             }
 
             return View(viewModel);
+        }
+
+        private bool IsVoucherValid(Voucher usedVoucher, string currentUserId, int examId)
+        {
+            var isVoucherExpired = Utilities.IsVoucherExpired(
+                Utilities.GetVoucherExpirationDate(usedVoucher.CreateDate, Utilities.VoucherValidationInMonth));
+
+            if (isVoucherExpired)
+                return false;
+
+
+            var voucherIsUsedBefore = _unitOfWork.ExamsReservation.GetUserExamByVoucherId(usedVoucher.Id);
+
+            if (voucherIsUsedBefore != null)
+                return false;
+
+
+            var userRegisteredBefore = _unitOfWork.ExamsReservation
+                .GetUserExamByForeignKeys(currentUserId, examId, usedVoucher.Id);
+
+            if (userRegisteredBefore != null)
+                return false;
+
+            return true;
         }
 
 
