@@ -52,6 +52,7 @@ namespace Mock3.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(int id, RegisterExamViewModel model)
         {
             if (!ModelState.IsValid)
